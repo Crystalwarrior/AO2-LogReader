@@ -62,7 +62,7 @@ filters = PackedStringArray("*.log;Log File")
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(600, 500)
-ok_button_text = "Select This Folder"
+ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
 
