@@ -76,11 +76,11 @@ access = 2
 [node name="LogView" type="TextEdit" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.444444
-anchor_top = 0.154321
+anchor_left = 0.437
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -8.0
+offset_left = 0.575989
+offset_top = 100.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
@@ -93,9 +93,9 @@ metadata/_edit_use_anchors_ = true
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.154321
 anchor_right = 0.434896
 anchor_bottom = 1.0
+offset_top = 100.0
 offset_right = 1.0
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
