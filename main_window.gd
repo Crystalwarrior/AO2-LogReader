@@ -15,19 +15,37 @@ var last_date_modified
 
 func _process(delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
-		reload_logfile()
-		logview.text = current_file.get_as_text()
-		scroll_to_last_line()
-		parse_logfile()
+		if reload_logfile():
+			logview.text = current_file.get_as_text()
+			scroll_to_last_line()
+			parse_logfile()
 
 
 func parse_line(line):
-	var speaker = line.substr(0, line.find(":")).strip_edges()
-	var showname = speaker.substr(0, line.find("(")).strip_edges()
+	if not line.begins_with("["):
+		parsed_view.add_text(line + "\n")
+		return
+	var is_ooc = false
+	if line.begins_with("[OOC]"):
+		is_ooc = true
+		line = line.substr("[OOC]".length())
+	var timestamp = line.substr(0, line.find("]"))
+	var message = line.substr(timestamp.length()+1).strip_edges()
+	var speaker = message.substr(0, message.find(":")).strip_edges()
+	var italics = false
+	if speaker.ends_with(" shouts"):
+		italics = true
+		speaker = speaker.substr(0, speaker.length() - " shouts".length())
+	if speaker.ends_with(" has played a song"):
+		italics = true
+		speaker = speaker.substr(0, speaker.length() - " has played a song".length())
+	var showname = speaker.substr(0, message.find("(")).strip_edges()
 	if showname != speaker:
 		speaker = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
 	# TODO: parse speaker even in "shouts", "plays music" etc. IC logs
 	var speaker_icon = asset_folder_path + "/characters/" + speaker + "/char_icon.png"
+#	if speaker == "$":
+#		speaker_icon = asset_folder_path + "/evidence/empty.png"
 	if FileAccess.file_exists(speaker_icon):
 		# TODO: cache this, ideally by using Godot's resource system properly
 		var image = Image.load_from_file(speaker_icon)
@@ -36,21 +54,18 @@ func parse_line(line):
 		parsed_view.add_image(texture, 24, 24)
 	else:
 		push_warning("Couldn't find char_icon for %s" % [speaker_icon])
-	parsed_view.add_text(line + "\n")
+	if italics:
+		parsed_view.push_italics()
+	parsed_view.add_text(message + "\n")
+	if italics:
+		parsed_view.pop()
 
 
 func parse_logfile():
 	parsed_view.clear()
 	var lines = logview.text.split("\n")
 	for line in lines:
-		if not line.begins_with("["):
-			continue
-		# TODO: parse movement etc.
-		if line.begins_with("[OOC]"):
-			continue
-		var timestamp = line.substr(0, line.find("]"))
-		var message = line.substr(timestamp.length()+1).strip_edges()
-		parse_line(message)
+		parse_line(line)
 
 
 func open_logfile(path):
@@ -80,6 +95,7 @@ func _on_file_dialog_file_selected(path):
 	if open_logfile(path):
 		logview.text = current_file.get_as_text()
 		scroll_to_last_line()
+		parse_logfile()
 
 
 func _on_folder_dialog_dir_selected(dir):
@@ -89,3 +105,10 @@ func _on_folder_dialog_dir_selected(dir):
 
 func _on_link_assets_button_pressed():
 	folder_dialog.show()
+
+
+func _on_refresh_button_pressed():
+	if reload_logfile():
+		logview.text = current_file.get_as_text()
+		scroll_to_last_line()
+		parse_logfile()
