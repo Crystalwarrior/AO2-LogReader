@@ -26,13 +26,12 @@ func parse_line(line):
 	var showname = speaker.substr(0, line.find("(")).strip_edges()
 	if showname != speaker:
 		speaker = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
+	# TODO: parse speaker even in "shouts", "plays music" etc. IC logs
 	var speaker_icon = asset_folder_path + "/characters/" + speaker + "/char_icon.png"
 	if FileAccess.file_exists(speaker_icon):
 		# TODO: cache this, ideally by using Godot's resource system properly
 		var image = Image.load_from_file(speaker_icon)
 		var texture = ImageTexture.create_from_image(image)
-		# Test texture rect to display the proper image
-		$TextureRect.set_texture(texture)
 		# Add image to the bbcode tag stack
 		parsed_view.add_image(texture, 24, 24)
 	else:
@@ -59,6 +58,7 @@ func open_logfile(path):
 		current_file.close()
 	current_file = FileAccess.open(path, FileAccess.READ)
 	current_file_path = path
+	$LogfileLabel.text = "Current logfile: " + current_file_path
 	last_date_modified = FileAccess.get_modified_time(path)
 	return current_file
 
@@ -84,6 +84,7 @@ func _on_file_dialog_file_selected(path):
 
 func _on_folder_dialog_dir_selected(dir):
 	asset_folder_path = dir
+	$AssetsLabel.text = "Current base: " + asset_folder_path
 
 
 func _on_link_assets_button_pressed():
