@@ -1,0 +1,95 @@
+[gd_scene load_steps=3 format=3 uid="uid://cpp1f87megsvi"]
+
+[ext_resource type="Script" path="res://main_window.gd" id="1_nrrhj"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_cppi3"]
+number_color = Color(0.392157, 1, 0.780392, 1)
+symbol_color = Color(0.631373, 0.658824, 0.854902, 1)
+function_color = Color(1, 1, 1, 1)
+member_variable_color = Color(1, 1, 1, 1)
+color_regions = {
+"[ ]": Color(0.45098, 0.772549, 0.65098, 1)
+}
+
+[node name="MainWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nrrhj")
+
+[node name="OpenLogfileButton" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Open Logfile"
+
+[node name="LinkAssetsButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 122.0
+offset_right = 228.0
+offset_bottom = 31.0
+text = "Link Assets"
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(600, 500)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.log;Log File")
+
+[node name="FolderDialog" type="FileDialog" parent="."]
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(600, 500)
+ok_button_text = "Select This Folder"
+file_mode = 2
+access = 2
+
+[node name="LogView" type="TextEdit" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.444444
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
+editable = false
+wrap_mode = 1
+syntax_highlighter = SubResource("CodeHighlighter_cppi3")
+minimap_draw = true
+metadata/_edit_use_anchors_ = true
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.154321
+anchor_right = 0.434896
+anchor_bottom = 1.0
+offset_right = 1.0
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ParsedView" type="RichTextLabel" parent="PanelContainer"]
+layout_mode = 2
+bbcode_enabled = true
+scroll_following = true
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 368.0
+offset_top = 20.0
+offset_right = 408.0
+offset_bottom = 60.0
+
+[connection signal="pressed" from="OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
+[connection signal="pressed" from="LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
