@@ -36,17 +36,24 @@ text = "Current logfile: "
 
 [node name="LinkAssetsButton" type="Button" parent="."]
 layout_mode = 0
-offset_top = 40.0
+offset_top = 32.0
 offset_right = 106.0
-offset_bottom = 71.0
+offset_bottom = 63.0
 text = "Link Assets"
+
+[node name="RefreshButton" type="Button" parent="."]
+layout_mode = 0
+offset_top = 64.0
+offset_right = 106.0
+offset_bottom = 95.0
+text = "Refresh"
 
 [node name="AssetsLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 111.0
-offset_top = 43.0
+offset_top = 35.0
 offset_right = 227.0
-offset_bottom = 69.0
+offset_bottom = 61.0
 text = "Current base: "
 
 [node name="FileDialog" type="FileDialog" parent="."]
@@ -69,11 +76,11 @@ access = 2
 [node name="LogView" type="TextEdit" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.444444
-anchor_top = 0.154321
+anchor_left = 0.437
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -8.0
+offset_left = 0.575989
+offset_top = 100.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
@@ -86,20 +93,23 @@ metadata/_edit_use_anchors_ = true
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.154321
 anchor_right = 0.434896
 anchor_bottom = 1.0
+offset_top = 100.0
 offset_right = 1.0
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="ParsedView" type="RichTextLabel" parent="PanelContainer"]
 layout_mode = 2
+focus_mode = 2
 bbcode_enabled = true
 scroll_following = true
+selection_enabled = true
 metadata/_edit_use_anchors_ = true
 
 [connection signal="pressed" from="OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
 [connection signal="pressed" from="LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
+[connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]

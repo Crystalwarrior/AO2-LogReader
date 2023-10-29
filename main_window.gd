@@ -16,19 +16,36 @@ var last_date_modified
 func _process(delta):
 #Each frame, if the current file path and last date modified are not equal to the previous modified time of the current file in the path
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
-		reload_logfile() #Reload the current log file in the file path and do the open_logfile function
-		logview.text = current_file.get_as_text()
-		scroll_to_last_line() #Scrolls to the last line using a scrollbar
-		parse_logfile()
-
+		if reload_logfile(): #Reload the current log file in the file path and do the open_logfile function
+			logview.text = current_file.get_as_text()
+			scroll_to_last_line()
+			parse_logfile()
 
 func parse_line(line):
-	var speaker = line.substr(0, line.find(":")).strip_edges()
-	var showname = speaker.substr(0, line.find("(")).strip_edges()
+	if not line.begins_with("["):
+		parsed_view.add_text(line + "\n")
+		return
+	var is_ooc = false
+	if line.begins_with("[OOC]"):
+		is_ooc = true
+		line = line.substr("[OOC]".length())
+	var timestamp = line.substr(0, line.find("]"))
+	var message = line.substr(timestamp.length()+1).strip_edges()
+	var speaker = message.substr(0, message.find(":")).strip_edges()
+	var italics = false
+	if speaker.ends_with(" shouts"):
+		italics = true
+		speaker = speaker.substr(0, speaker.length() - " shouts".length())
+	if speaker.ends_with(" has played a song"):
+		italics = true
+		speaker = speaker.substr(0, speaker.length() - " has played a song".length())
+	var showname = speaker.substr(0, message.find("(")).strip_edges()
 	if showname != speaker:
 		speaker = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
 	# TODO: parse speaker even in "shouts", "plays music" etc. IC logs
 	var speaker_icon = asset_folder_path + "/characters/" + speaker + "/char_icon.png"
+#	if speaker == "$":
+#		speaker_icon = asset_folder_path + "/evidence/empty.png"
 	if FileAccess.file_exists(speaker_icon):
 		# TODO: cache this, ideally by using Godot's resource system properly
 		var image = Image.load_from_file(speaker_icon)
@@ -37,21 +54,18 @@ func parse_line(line):
 		parsed_view.add_image(texture, 24, 24)
 	else:
 		push_warning("Couldn't find char_icon for %s" % [speaker_icon])
-	parsed_view.add_text(line + "\n")
+	if italics:
+		parsed_view.push_italics()
+	parsed_view.add_text(message + "\n")
+	if italics:
+		parsed_view.pop()
 
 
 func parse_logfile():
 	parsed_view.clear()
 	var lines = logview.text.split("\n")
 	for line in lines:
-		if not line.begins_with("["):
-			continue
-		# TODO: parse movement etc.
-		if line.begins_with("[OOC]"):
-			continue
-		var timestamp = line.substr(0, line.find("]"))
-		var message = line.substr(timestamp.length()+1).strip_edges()
-		parse_line(message)
+		parse_line(line)
 
 
 func open_logfile(path):
@@ -65,11 +79,11 @@ func open_logfile(path):
 
 
 func reload_logfile():
-	return open_logfile(current_file_path) #Returns the function to open the log file in the current file path
+	return open_logfile(current_file_path) #Returns the results of the function to open the log file in the current file path
 
 
 func scroll_to_last_line(): 
-#Adds a scrollbar to the logview window that can be moved
+#Adds functionality to the scrollbar in the logview window that can be moved
 	var scrollbar: VScrollBar = logview.get_v_scroll_bar()
 	scrollbar.value = scrollbar.max_value
 
@@ -85,6 +99,7 @@ func _on_file_dialog_file_selected(path):
 	if open_logfile(path):
 		logview.text = current_file.get_as_text()
 		scroll_to_last_line()
+		parse_logfile()
 
 
 func _on_folder_dialog_dir_selected(dir):
@@ -97,3 +112,10 @@ func _on_folder_dialog_dir_selected(dir):
 func _on_link_assets_button_pressed():
 #When the [Link Assets] button is pressed it shows a window to choose a folder from your PC
 	folder_dialog.show()
+
+
+func _on_refresh_button_pressed():
+	if reload_logfile():
+		logview.text = current_file.get_as_text()
+		scroll_to_last_line()
+		parse_logfile()
