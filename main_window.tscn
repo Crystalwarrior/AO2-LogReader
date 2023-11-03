@@ -18,7 +18,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("1_nrrhj")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+grow_horizontal = 2
 
 [node name="OpenLogfileButton" type="Button" parent="."]
 layout_mode = 0
@@ -48,6 +56,24 @@ offset_right = 106.0
 offset_bottom = 95.0
 text = "Refresh"
 
+[node name="ToggleParsedView" type="Button" parent="."]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 64.0
+offset_right = 267.0
+offset_bottom = 95.0
+toggle_mode = true
+text = "Toggle Parsed View"
+
+[node name="ToggleLogView" type="Button" parent="."]
+layout_mode = 0
+offset_left = 271.0
+offset_top = 64.0
+offset_right = 402.0
+offset_bottom = 95.0
+toggle_mode = true
+text = "Toggle Log View"
+
 [node name="AssetsLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 111.0
@@ -69,11 +95,32 @@ filters = PackedStringArray("*.log;Log File")
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(600, 500)
-ok_button_text = "Select This Folder"
+ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
 
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.434896
+anchor_bottom = 1.0
+offset_top = 100.0
+offset_right = 1.0
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="ParsedView" type="RichTextLabel" parent="PanelContainer"]
+visible = false
+layout_mode = 2
+focus_mode = 2
+bbcode_enabled = true
+scroll_following = true
+selection_enabled = true
+metadata/_edit_use_anchors_ = true
+
 [node name="LogView" type="TextEdit" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.437
@@ -90,26 +137,10 @@ syntax_highlighter = SubResource("CodeHighlighter_cppi3")
 minimap_draw = true
 metadata/_edit_use_anchors_ = true
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.434896
-anchor_bottom = 1.0
-offset_top = 100.0
-offset_right = 1.0
-grow_vertical = 2
-metadata/_edit_use_anchors_ = true
-
-[node name="ParsedView" type="RichTextLabel" parent="PanelContainer"]
-layout_mode = 2
-focus_mode = 2
-bbcode_enabled = true
-scroll_following = true
-selection_enabled = true
-metadata/_edit_use_anchors_ = true
-
 [connection signal="pressed" from="OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
 [connection signal="pressed" from="LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
 [connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="toggled" from="ToggleParsedView" to="." method="_on_toggle_parsed_view_toggled"]
+[connection signal="toggled" from="ToggleLogView" to="." method="_on_toggle_log_view_toggled"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]

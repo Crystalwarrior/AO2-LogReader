@@ -112,3 +112,11 @@ func _on_refresh_button_pressed():
 		logview.text = current_file.get_as_text()
 		scroll_to_last_line()
 		parse_logfile()
+
+
+func _on_toggle_log_view_toggled(button_pressed):
+	logview.visible = button_pressed
+
+
+func _on_toggle_parsed_view_toggled(button_pressed):
+	$PanelContainer.visible = button_pressed
