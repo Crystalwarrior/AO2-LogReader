@@ -5,6 +5,7 @@ extends Control
 @onready var file_dialog: FileDialog = $FileDialog
 @onready var folder_dialog: FileDialog = $FolderDialog
 
+signal movement(char, from, fromID, to, toID)
 
 var asset_folder_path: String
 
@@ -67,8 +68,15 @@ func parse_line(line):
 	var speaker = line.substr(0, line.find(":")).strip_edges()
 	var italics = false
 	if is_ooc:
-		if not hostname and (message.begins_with("===") or message.begins_with("Character changed")) and speaker != "[Global log]":
+		if not hostname and (message.begins_with("===") or message.begins_with("Changed to")) and speaker != "[Global log]":
 			hostname = speaker
+		if speaker == hostname and line.find("moves from") != -1:
+			var character = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
+			var from = line.split("] ")[2].split(" to")[0]
+			var fromID = line.split("] ")[1].split("[")[1]
+			var to = line.split("] ")[3].rsplit(".")[0]
+			var toID = line.split("] ")[2].split("[")[1]
+			emit_signal("movement", character, from, fromID, to, toID)
 	else:
 		var actions = ["shouts", "has "]
 		for action in actions:
