@@ -1,14 +1,7 @@
 extends Control
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+var resize_offset: Vector2 = Vector2(0, 0)
 
 
 func _gui_input(event):
@@ -19,7 +12,13 @@ func _gui_input(event):
 		var rect = get_global_rect()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			if %ScaleButton.button_pressed:
-				var diff = global_mouse_pos - global_position
-				size = diff
+				var global_diff = global_mouse_pos - global_position
+				var scale_button_diff = global_mouse_pos - %ScaleButton.global_position
+				if resize_offset == Vector2(0, 0):
+					resize_offset = %ScaleButton.size - scale_button_diff
+				size = global_diff + resize_offset
 			else:
 				position += global_relative_pos
+		else:
+			if resize_offset != Vector2(0, 0):
+				resize_offset = Vector2(0, 0)
