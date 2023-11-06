@@ -27,4 +27,3 @@ position = Vector2(576, 324)
 script = ExtResource("3_xct7p")
 
 [connection signal="movement" from="CanvasLayer/MainWindow" to="Areas" method="_on_main_window_movement"]
-[connection signal="zoomChange" from="MapViewCamera" to="Areas" method="_on_map_view_camera_zoom_change"]
