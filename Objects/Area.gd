@@ -11,12 +11,15 @@ func _process(delta):
 	pass
 
 
-func _input(event):
+func _gui_input(event):
 	if event is InputEventMouseMotion:
+		var global_mouse_pos = get_global_mouse_position()
+		var old_pos = global_mouse_pos - event.get_relative()
+		var global_relative_pos = global_mouse_pos - old_pos
+		var rect = get_global_rect()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-#				print("WEWEWEWE")
 			if %ScaleButton.button_pressed:
-				self.size += event.get_relative() / get_parent().zoomValue
-			if %MoveButton.button_pressed:
-				self.position += event.get_relative() / get_parent().zoomValue
-			
+				var diff = global_mouse_pos - global_position
+				size = diff
+			else:
+				position += global_relative_pos
