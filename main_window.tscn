@@ -140,6 +140,29 @@ syntax_highlighter = SubResource("CodeHighlighter_cppi3")
 minimap_draw = true
 metadata/_edit_use_anchors_ = true
 
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 406.0
+offset_top = 64.0
+offset_right = 498.0
+offset_bottom = 95.0
+focus_mode = 0
+toggle_mode = true
+text = "Characters"
+
+[node name="Characters" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 405.0
+offset_top = 101.0
+offset_right = 734.0
+offset_bottom = 163.0
+
+[node name="CharacterList" type="HFlowContainer" parent="Characters"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [connection signal="pressed" from="OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
 [connection signal="pressed" from="LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
 [connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]
@@ -147,3 +170,4 @@ metadata/_edit_use_anchors_ = true
 [connection signal="toggled" from="ToggleLogView" to="." method="_on_toggle_log_view_toggled"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
+[connection signal="toggled" from="Button" to="." method="_on_button_toggled"]

@@ -7,6 +7,10 @@ extends Control
 
 signal movement(char, from, fromID, to, toID)
 
+signal placeChar(char, icon, to, toID)
+
+var characterNode = preload("res://Objects/Character.tscn")
+
 var asset_folder_path: String
 
 var current_file: FileAccess
@@ -66,12 +70,27 @@ func parse_line(line):
 	line = line.substr(timestamp.length()+1)
 	var message = line.substr(line.find(":")+1).strip_edges()
 	var speaker = line.substr(0, line.find(":")).strip_edges()
+
+	var character = find_character(line)
+
+#	if !is_ooc: 
+#
+#		if charName != hostname and hostname != "":	
+#			var found = false
+#			for char in %CharacterList.get_children():
+#				if char.name == charName:
+#					found = true
+#			if found == false and line.find("[") != -1:
+#				create_character(charName, line)
+
+
+		
 	var italics = false
 	if is_ooc:
 		if not hostname and (message.begins_with("===") or message.begins_with("Changed to")) and speaker != "[Global log]":
 			hostname = speaker
 		if speaker == hostname and line.find("moves from") != -1:
-			var character = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
+#			var character = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
 			var from = line.split("] ")[2].split(" to")[0]
 			var fromID = line.split("] ")[1].split("[")[1]
 			var to = line.split("] ")[3].rsplit(".")[0]
@@ -93,15 +112,12 @@ func parse_line(line):
 		if charfolder in shownames:
 			charfolder = shownames[charfolder]
 		if charfolder:
-			var speaker_icon = asset_folder_path + "/characters/" + charfolder + "/char_icon.png"
-			if FileAccess.file_exists(speaker_icon):
-				# TODO: cache this, ideally by using Godot's resource system properly
-				var image = Image.load_from_file(speaker_icon)
-				var texture = ImageTexture.create_from_image(image)
-				# Add image to the bbcode tag stack
+			var texture = get_speakerIcon(charfolder)
+			if texture is ImageTexture:
+					# Add image to the bbcode tag stack
 				parsed_view.add_image(texture, 24, 24)
 			else:
-				push_warning("Couldn't find char_icon for %s (%s)" % [speaker_icon, message])
+				push_warning("Couldn't find char_icon for %s (%s)" % [asset_folder_path + "/characters/" + charfolder + "/char_icon.png", message])
 	if italics:
 		parsed_view.push_italics()
 	if speaker == hostname:
@@ -117,6 +133,89 @@ func parse_line(line):
 	if italics:
 		parsed_view.pop()
 
+func create_character(name, showName, AOID, line):
+# PUT CHARACTER INTO THE LIST
+	var newChar = characterNode.instantiate()
+	newChar.name = name
+	newChar.charName = name
+	newChar.get_node("Name").text = name
+	if AOID != null:
+		newChar.AOID = AOID
+	if showName != null:
+		newChar.showName = showName
+	var icon = get_speakerIcon(name)
+	if icon is ImageTexture:
+		newChar.get_node("Icon").texture = icon
+	%CharacterList.add_child(newChar)
+
+#PLACE CHARACTER ON THE MAP
+	# FIND AREANAME AND AREAID
+	var areaName = null
+	var areaID = -1
+	if line.find(": }}}[") != -1:
+		areaID = line.split(": }}}[")[1].split("]")[0]
+	if line.find("moves from") != -1:
+		areaName = line.split("] ")[3].rsplit(".")[0]
+		areaID = line.split("] ")[2].split("[")[1]
+	if line.find("enters from") != -1:
+		return
+
+	# EMIT SIGNAL TO AREAS
+	if areaID != "-1":
+		emit_signal("placeChar", name, icon, areaName, areaID)
+
+	return newChar
+
+func find_character(line):
+	var fullName
+	var charName
+	var showName
+	var AOID = null
+	var moveline = false
+	# FINDING AOID (ID in AO, different from ID used in this program) 
+	# AND THE FULL NAME (MEANING SHOWNAME AND CHARACTERNAME TOGETHER)
+	if line.find("moves from") != -1:
+		fullName = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
+		AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
+		moveline = true
+	if line.find("enters from") != -1:
+		fullName = line.split("]")[1].lstrip(" ").split("enters from")[0].rstrip(" ")
+		AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
+		moveline = true
+	if line.find(": }}}[") != -1:
+		fullName = line.split(":")[0].strip_edges()
+
+	if fullName == null:
+		return null
+
+	# IF THERE IS <SHOWNAME>(CHARNAME) STRIP OUT THE SHOWNAME
+	if fullName.find("(") != -1:
+		charName = fullName.split("(")[fullName.split("(").size()-1].rstrip(")")
+		showName = fullName.split("(")[0].rstrip(" ")
+	else:
+		charName = fullName
+
+	for char in %CharacterList.get_children():
+		if char.charName == charName:
+			if showName != null:
+				if char.showName != showName:
+					char.showName = showName
+			return char
+		if AOID != null and char.AOID == AOID:
+			return char
+		if showName != null and char.showName == showName:
+			return char
+
+	return create_character(charName, showName, AOID, line)
+
+func get_speakerIcon(charfolder):
+	var speaker_icon = asset_folder_path + "/characters/" + charfolder + "/char_icon.png"
+	if FileAccess.file_exists(speaker_icon):
+		# TODO: cache this, ideally by using Godot's resource system properly
+		var image = Image.load_from_file(speaker_icon)
+		return ImageTexture.create_from_image(image)
+	else:
+		return null
 
 func parse_logfile():
 	parsed_view.clear()
@@ -179,3 +278,7 @@ func _on_toggle_log_view_toggled(button_pressed):
 
 func _on_toggle_parsed_view_toggled(button_pressed):
 	$PanelContainer.visible = button_pressed
+
+
+func _on_button_toggled(button_pressed):
+	%Characters.visible = button_pressed

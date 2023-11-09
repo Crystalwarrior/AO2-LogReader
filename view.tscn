@@ -27,3 +27,4 @@ position = Vector2(576, 324)
 script = ExtResource("3_xct7p")
 
 [connection signal="movement" from="CanvasLayer/MainWindow" to="Areas" method="_on_main_window_movement"]
+[connection signal="placeChar" from="CanvasLayer/MainWindow" to="Areas" method="_on_main_window_place_char"]

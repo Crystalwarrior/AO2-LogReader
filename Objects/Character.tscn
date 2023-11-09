@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://ddmxeq6e646fp"]
+
+[ext_resource type="Script" path="res://Objects/Character.gd" id="1_d0qnn"]
+[ext_resource type="Texture2D" uid="uid://cdpxsjmlhhqds" path="res://Assets/Bean.png" id="1_ov07w"]
+[ext_resource type="Texture2D" uid="uid://bm342d3lsa4qa" path="res://Assets/GuiVisibilityVisible.svg" id="2_ix08b"]
+[ext_resource type="Texture2D" uid="uid://oiisi4853yoi" path="res://Assets/GuiVisibilityHidden.svg" id="3_swi4v"]
+
+[node name="HBoxContainer" type="HBoxContainer"]
+offset_right = 88.0
+offset_bottom = 40.0
+script = ExtResource("1_d0qnn")
+
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("1_ov07w")
+
+[node name="Name" type="Label" parent="."]
+layout_mode = 2
+text = "Moe"
+
+[node name="Visibility" type="TextureButton" parent="."]
+layout_mode = 2
+size_flags_horizontal = 6
+toggle_mode = true
+texture_normal = ExtResource("2_ix08b")
+texture_pressed = ExtResource("3_swi4v")
+stretch_mode = 3
