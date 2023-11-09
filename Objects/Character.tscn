@@ -6,13 +6,16 @@
 [ext_resource type="Texture2D" uid="uid://oiisi4853yoi" path="res://Assets/GuiVisibilityHidden.svg" id="3_swi4v"]
 
 [node name="HBoxContainer" type="HBoxContainer"]
-offset_right = 88.0
-offset_bottom = 40.0
+offset_right = 82.0
+offset_bottom = 26.0
 script = ExtResource("1_d0qnn")
 
 [node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 texture = ExtResource("1_ov07w")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Name" type="Label" parent="."]
 layout_mode = 2

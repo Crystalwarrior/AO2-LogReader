@@ -9,21 +9,21 @@ var prevPos
 
 var waitList = {}
 
-func _is_exist(name, ID):
+func _is_exist(_name, ID):
 	for child in self.get_children():
 		if child.name == str(ID):
-			if child.get_node("%Name").text == "" and name != null:
-				child.get_node("%Name").text = name
+			if child.get_node("%Name").text == "" and _name != null:
+				child.get_node("%Name").text = _name
 			return true
 	return false
 
-func _create_area(name, ID):
+func _create_area(_name, ID):
 	if int(ID) == -1:
 		return
 	var newArea = area.instantiate()
 	newArea.name = str(ID)
-	if name != null:
-		newArea.get_node("%Name").text = name
+	if _name != null:
+		newArea.get_node("%Name").text = _name
 	if prevArea:
 		if prevArea.position == prevPos:
 			newArea.position += prevArea.position + Vector2(prevArea.size.x + 10, 0)
@@ -43,11 +43,11 @@ func _on_main_window_movement(char, from, fromID, to, toID):
 	for area in self.get_children():
 		for character in area.get_node("%CharacterContainer").get_children():
 #			print(character.name)
-			if character.name == char.name:
+			if character.name == char.charName:
 				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
 				return
 
-	_on_main_window_place_char(char.name, char.get_node("Icon").texture, to, toID)
+	_on_main_window_place_char(char.charName, char.get_node("Icon").texture, to, toID)
 
 
 func _on_map_view_camera_zoom_change(value):
@@ -64,7 +64,11 @@ func _on_main_window_place_char(charName, icon, to, toID):
 	for area in self.get_children():
 		if area.name == toID:
 			var newChar = TextureRect.new()
+			newChar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			newChar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			newChar.custom_minimum_size = Vector2(24,24)
 			newChar.name = charName
+			newChar.tooltip_text = charName
 			if icon != null:
 				newChar.texture = icon
 			#PLACE CHARACTER

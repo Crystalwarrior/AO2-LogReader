@@ -133,17 +133,17 @@ func parse_line(line):
 	if italics:
 		parsed_view.pop()
 
-func create_character(name, showName, AOID, line):
+func create_character(charfolder, showName, AOID, line):
 # PUT CHARACTER INTO THE LIST
 	var newChar = characterNode.instantiate()
-	newChar.name = name
-	newChar.charName = name
-	newChar.get_node("Name").text = name
+	newChar.name = charfolder
+	newChar.charName = charfolder
+	newChar.get_node("Name").text = charfolder
 	if AOID != null:
 		newChar.AOID = AOID
 	if showName != null:
 		newChar.showName = showName
-	var icon = get_speakerIcon(name)
+	var icon = get_speakerIcon(charfolder)
 	if icon is ImageTexture:
 		newChar.get_node("Icon").texture = icon
 	%CharacterList.add_child(newChar)
@@ -162,12 +162,12 @@ func create_character(name, showName, AOID, line):
 
 	# EMIT SIGNAL TO AREAS
 	if areaID != "-1":
-		emit_signal("placeChar", name, icon, areaName, areaID)
+		emit_signal("placeChar", charfolder, icon, areaName, areaID)
 
 	return newChar
 
 func find_character(line):
-	var fullName
+	var speaker
 	var charName
 	var showName
 	var AOID = null
@@ -175,38 +175,39 @@ func find_character(line):
 	# FINDING AOID (ID in AO, different from ID used in this program) 
 	# AND THE FULL NAME (MEANING SHOWNAME AND CHARACTERNAME TOGETHER)
 	if line.find("moves from") != -1:
-		fullName = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
+		speaker = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
 		AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
 		moveline = true
 	if line.find("enters from") != -1:
-		fullName = line.split("]")[1].lstrip(" ").split("enters from")[0].rstrip(" ")
+		speaker = line.split("]")[1].lstrip(" ").split("enters from")[0].rstrip(" ")
 		AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
 		moveline = true
 	if line.find(": }}}[") != -1:
-		fullName = line.split(":")[0].strip_edges()
+		speaker = line.split(":")[0].strip_edges()
 
-	if fullName == null:
+	if speaker == null:
 		return null
 
 	# IF THERE IS <SHOWNAME>(CHARNAME) STRIP OUT THE SHOWNAME
-	if fullName.find("(") != -1:
-		charName = fullName.split("(")[fullName.split("(").size()-1].rstrip(")")
-		showName = fullName.split("(")[0].rstrip(" ")
-	else:
-		charName = fullName
+	var showname = speaker.substr(0, speaker.find("(")).strip_edges()
+	var charfolder = showname
+	if showname != speaker:
+		charfolder = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
 
+	if charfolder in shownames:
+		charfolder = shownames[charfolder]
 	for char in %CharacterList.get_children():
 		if char.charName == charName:
-			if showName != null:
-				if char.showName != showName:
-					char.showName = showName
+			if showname != null:
+				if char.showName != showname:
+					char.showName = showname
 			return char
 		if AOID != null and char.AOID == AOID:
 			return char
-		if showName != null and char.showName == showName:
+		if showname != null and char.showName == showname:
 			return char
 
-	return create_character(charName, showName, AOID, line)
+	return create_character(charfolder, showname, AOID, line)
 
 func get_speakerIcon(charfolder):
 	var speaker_icon = asset_folder_path + "/characters/" + charfolder + "/char_icon.png"
