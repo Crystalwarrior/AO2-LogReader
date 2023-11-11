@@ -138,6 +138,7 @@ func create_character(charfolder, showName, AOID, line):
 	var newChar = characterNode.instantiate()
 	newChar.name = charfolder
 	newChar.charName = charfolder
+	newChar.color = Color.from_hsv((%CharacterList.get_child_count() * 137.508)/100, 0.6, 0.9)
 	newChar.get_node("Name").text = charfolder
 	if AOID != null:
 		newChar.AOID = AOID
@@ -146,6 +147,8 @@ func create_character(charfolder, showName, AOID, line):
 	var icon = get_speakerIcon(charfolder)
 	if icon is ImageTexture:
 		newChar.get_node("Icon").texture = icon
+	else:
+		newChar.get_node("Icon").modulate = newChar.color
 	%CharacterList.add_child(newChar)
 
 #PLACE CHARACTER ON THE MAP
@@ -162,7 +165,7 @@ func create_character(charfolder, showName, AOID, line):
 
 	# EMIT SIGNAL TO AREAS
 	if areaID != "-1":
-		emit_signal("placeChar", charfolder, icon, areaName, areaID)
+		get_owner().get_node("Areas").Place_character(charfolder, icon, newChar.color, areaName, areaID)
 
 	return newChar
 

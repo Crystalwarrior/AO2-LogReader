@@ -33,7 +33,6 @@ func _create_area(_name, ID):
 
 
 func _on_main_window_movement(char, from, fromID, to, toID):
-	print("MOVEMENT")
 #	print("Move " + char.charName + " to " + to)
 	if !_is_exist(from, fromID):
 		_create_area(from, fromID)
@@ -47,7 +46,7 @@ func _on_main_window_movement(char, from, fromID, to, toID):
 				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
 				return
 
-	_on_main_window_place_char(char.charName, char.get_node("Icon").texture, to, toID)
+	Place_character(char.charName, char.get_node("Icon").texture, char.color, to, toID)
 
 
 func _on_map_view_camera_zoom_change(value):
@@ -55,9 +54,7 @@ func _on_map_view_camera_zoom_change(value):
 
 
 
-func _on_main_window_place_char(charName, icon, to, toID):
-	print("PLACE")
-	print(charName)
+func Place_character(charName, icon, color, to, toID):
 	if !_is_exist(to, toID):
 		_create_area(to, toID)
 
@@ -71,7 +68,8 @@ func _on_main_window_place_char(charName, icon, to, toID):
 			newChar.tooltip_text = charName
 			if icon != null:
 				newChar.texture = icon
+				if newChar.texture.resource_path == "res://Assets/Bean.png":
+					newChar.modulate = color
 			#PLACE CHARACTER
 			area.get_node("%CharacterContainer").add_child(newChar)
-			print(area.get_node("%CharacterContainer").get_children())
 			break
