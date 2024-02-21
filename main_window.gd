@@ -22,6 +22,7 @@ var hostname: String
 
 #{"showname": "charfolder"}
 var shownames: Dictionary = {}
+var characters = []
 
 func _process(delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
@@ -71,7 +72,6 @@ func parse_line(line):
 	var message = line.substr(line.find(":")+1).strip_edges()
 	var speaker = line.substr(0, line.find(":")).strip_edges()
 
-	var character = find_character(line)
 
 #	if !is_ooc: 
 #
@@ -82,8 +82,6 @@ func parse_line(line):
 #					found = true
 #			if found == false and line.find("[") != -1:
 #				create_character(charName, line)
-
-
 		
 	var italics = false
 	if is_ooc:
@@ -95,7 +93,7 @@ func parse_line(line):
 			var fromID = line.split("] ")[1].split("[")[1]
 			var to = line.split("] ")[3].rsplit(".")[0]
 			var toID = line.split("] ")[2].split("[")[1]
-			emit_signal("movement", character, from, fromID, to, toID)
+			#emit_signal("movement", character, from, fromID, to, toID)
 	else:
 		var actions = ["shouts", "has "]
 		for action in actions:
@@ -132,85 +130,155 @@ func parse_line(line):
 	parsed_view.add_text(message + "\n")
 	if italics:
 		parsed_view.pop()
+	if !is_ooc or line.contains("moves from"):
+		var nameArray
+		if speaker == hostname and line.contains("moves from"):
+			nameArray = [line.split("]")[1].lstrip(" ").split("moves from")[0].strip_edges()]
+		else:
+			nameArray = _clean_name(speaker)
+		if nameArray.is_empty():
+			return
+		var currentCharacter = _find_character(nameArray)
+		if currentCharacter == null:
+			#CREATE NEW CHARACTER
+			currentCharacter = create_character(characters.size(), line)
+		for currentName in nameArray:
+			if currentName != "":
+				currentCharacter.add_name(currentName)
+		
 
-func create_character(charfolder, showName, AOID, line):
+
+
+func create_character(id, line):
 # PUT CHARACTER INTO THE LIST
 	var newChar = characterNode.instantiate()
-	newChar.name = charfolder
-	newChar.charName = charfolder
 	newChar.color = Color.from_hsv((%CharacterList.get_child_count() * 137.508)/100, 0.6, 0.9)
-	newChar.get_node("Name").text = charfolder
-	if AOID != null:
-		newChar.AOID = AOID
-	if showName != null:
-		newChar.showName = showName
-	var icon = get_speakerIcon(charfolder)
-	if icon is ImageTexture:
-		newChar.get_node("Icon").texture = icon
-	else:
-		newChar.get_node("Icon").modulate = newChar.color
+	newChar.id = id
 	%CharacterList.add_child(newChar)
+	characters.append(newChar)
+	#newChar.name = charfolder
+	#newChar.charName = charfolder
+	#newChar.get_node("Name").text = charfolder
+	#if AOID != null:
+		#newChar.AOID = AOID
+	#if showName != null:
+		#newChar.showName = showName
+	#var icon = get_speakerIcon(charfolder)
+	#if icon is ImageTexture:
+		#newChar.get_node("Icon").texture = icon
+	#else:
+		#newChar.get_node("Icon").modulate = newChar.color
 
 #PLACE CHARACTER ON THE MAP
 	# FIND AREANAME AND AREAID
-	var areaName = null
-	var areaID = -1
-	if line.find(": }}}[") != -1:
-		areaID = line.split(": }}}[")[1].split("]")[0]
-	if line.find("moves from") != -1:
-		areaName = line.split("] ")[3].rsplit(".")[0]
-		areaID = line.split("] ")[2].split("[")[1]
-	if line.find("enters from") != -1:
-		return
+	#var areaName = null
+	#var areaID = -1
+	#if line.find(": }}}[") != -1:
+		#areaID = line.split(": }}}[")[1].split("]")[0]
+	#if line.find("moves from") != -1:
+		#areaName = line.split("] ")[3].rsplit(".")[0]
+		#areaID = line.split("] ")[2].split("[")[1]
+	#if line.find("enters from") != -1:
+		#return
 
-	# EMIT SIGNAL TO AREAS
-	if areaID != "-1":
-		get_owner().get_node("Areas").Place_character(charfolder, icon, newChar.color, areaName, areaID)
+	#if areaID != "-1":
+		#get_owner().get_node("Areas").place_character(charfolder, icon, newChar.color, areaName, areaID)
 
 	return newChar
 
-func find_character(line):
-	var speaker
-	var charName
-	var showName
-	var AOID = null
-	var moveline = false
-	# FINDING AOID (ID in AO, different from ID used in this program) 
-	# AND THE FULL NAME (MEANING SHOWNAME AND CHARACTERNAME TOGETHER)
-	if line.find("moves from") != -1:
-		speaker = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
-		AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
-		moveline = true
-	if line.find("enters from") != -1:
-		speaker = line.split("]")[1].lstrip(" ").split("enters from")[0].rstrip(" ")
-		AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
-		moveline = true
-	if line.find(": }}}[") != -1:
-		speaker = line.split(":")[0].strip_edges()
+func _clean_name(speaker):
+	var speakerArray = []
+	if speaker.split("(").size() > 1:
+		var splitArray = speaker.split("(")
+		speaker = splitArray[0].strip_edges() + "(" + splitArray[splitArray.size()-1].strip_edges()
+		speakerArray.append(splitArray[0].strip_edges())
+		speakerArray.append(splitArray[splitArray.size()-1].strip_edges().rstrip(")"))
+	elif speaker != "":
+		speakerArray.append(speaker.strip_edges())
+	return speakerArray
 
-	if speaker == null:
-		return null
+func _find_character(nameArray):
+	#var id
+	#for currentName in nameArray:
+		#for currentID in names.keys():
+			#for alias in names[currentID]:
+				#if alias == currentName:
+					#return id
+	#return null
+	if nameArray.has("???"):
+		print("============")
+		print(nameArray)
+		print("#")
+	for character in characters:
+		if nameArray.has("???"):
+			print(character.names)
+		for currentName in nameArray:
+			for alias in character.names:
+				if alias == currentName:
+					return character
+	return null
+	#if showName:
+		#id = find_id(showName)
+	#if folderName and id == null:
+		#id = find_id(folderName)
 
-	# IF THERE IS <SHOWNAME>(CHARNAME) STRIP OUT THE SHOWNAME
-	var showname = speaker.substr(0, speaker.find("(")).strip_edges()
-	var charfolder = showname
-	if showname != speaker:
-		charfolder = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
+	#if id != null:
+		#if showName:
+			#if !names[id].has(showName):
+				#names[id].append(showName)
+		#if folderName:
+			#if !names[id].has(folderName):
+				#names[id].append(folderName)
+	#elif showName != null and folderName != null:
+		#id = names.size()
+		#names[id] = []
+		#if showName:
+			#names[id].append(showName)
+		#if folderName:
+			#names[id].append(folderName)
 
-	if charfolder in shownames:
-		charfolder = shownames[charfolder]
-	for char in %CharacterList.get_children():
-		if char.charName == charName:
-			if showname != null:
-				if char.showName != showname:
-					char.showName = showname
-			return char
-		if AOID != null and char.AOID == AOID:
-			return char
-		if showname != null and char.showName == showname:
-			return char
-
-	return create_character(charfolder, showname, AOID, line)
+#func find_character(line):
+	#var speaker
+	#var charName
+	#var showName
+	#var AOID = null
+	#var moveline = false
+	## FINDING AOID (ID in AO, different from ID used in this program) 
+	## AND THE FULL NAME (MEANING SHOWNAME AND CHARACTERNAME TOGETHER)
+	#if line.find("moves from") != -1:
+		#speaker = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
+		#AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
+		#moveline = true
+	#if line.find("enters from") != -1:
+		#speaker = line.split("]")[1].lstrip(" ").split("enters from")[0].rstrip(" ")
+		#AOID = int(line.substr(line.find("[")+1, line.find("]")-line.find("[")-1))
+		#moveline = true
+	#if line.find(": }}}[") != -1:
+		#speaker = line.split(":")[0].strip_edges()
+#
+	#if speaker == null:
+		#return null
+#
+	## IF THERE IS <SHOWNAME>(CHARNAME) STRIP OUT THE SHOWNAME
+	#var showname = speaker.substr(0, speaker.find("(")).strip_edges()
+	#var charfolder = showname
+	#if showname != speaker:
+		#charfolder = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
+#
+	#if charfolder in shownames:
+		#charfolder = shownames[charfolder]
+	#for char in %CharacterList.get_children():
+		#if char.charName == charName:
+			#if showname != null:
+				#if char.showName != showname:
+					#char.showName = showname
+			#return char
+		#if AOID != null and char.AOID == AOID:
+			#return char
+		#if showname != null and char.showName == showname:
+			#return char
+#
+	#return create_character(charfolder, showname, AOID, line)
 
 func get_speakerIcon(charfolder):
 	var speaker_icon = asset_folder_path + "/characters/" + charfolder + "/char_icon.png"
@@ -227,6 +295,13 @@ func parse_logfile():
 	var lines = logview.text.split("\n")
 	for line in lines:
 		parse_line(line)
+	#print("CHARACTERS")
+	#for character in characters:
+		#print(character.names)
+	#for currentCharacter in characters:
+		#print("===================")
+		#for currentname in currentCharacter.names:
+			#print(currentname)
 
 
 func open_logfile(path):

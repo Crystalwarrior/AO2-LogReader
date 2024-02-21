@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://ddmxeq6e646fp"]
+[gd_scene load_steps=6 format=3 uid="uid://ddmxeq6e646fp"]
 
 [ext_resource type="Script" path="res://Objects/Character.gd" id="1_d0qnn"]
 [ext_resource type="Texture2D" uid="uid://cdpxsjmlhhqds" path="res://Assets/Bean.png" id="1_ov07w"]
 [ext_resource type="Texture2D" uid="uid://bm342d3lsa4qa" path="res://Assets/GuiVisibilityVisible.svg" id="2_ix08b"]
+[ext_resource type="Texture2D" uid="uid://b6dagfaoejst8" path="res://Assets/disconnect.svg" id="3_s7833"]
 [ext_resource type="Texture2D" uid="uid://oiisi4853yoi" path="res://Assets/GuiVisibilityHidden.svg" id="3_swi4v"]
 
 [node name="HBoxContainer" type="HBoxContainer"]
@@ -17,7 +18,26 @@ texture = ExtResource("1_ov07w")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="Disconnect" type="TextureRect" parent="Icon"]
+visible = false
+self_modulate = Color(1, 1, 1, 0.729412)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_right = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_s7833")
+expand_mode = 3
+
+[node name="Names" type="OptionButton" parent="."]
+layout_mode = 2
+selected = 0
+
 [node name="Name" type="Label" parent="."]
+visible = false
 layout_mode = 2
 text = "Moe"
 
