@@ -2,6 +2,8 @@ extends Control
 
 var area = preload("res://Objects/Area.tscn")
 
+var disconnectIcon = preload("res://Assets/disconnect.svg")
+
 var zoomValue = 1
 
 var prevArea
@@ -32,21 +34,38 @@ func _create_area(_name, ID):
 	prevPos = prevArea.position
 
 
-func _on_main_window_movement(char, from, fromID, to, toID):
+func movement(char, live, toID, to = null, fromID = null, from = null):
 #	print("Move " + char.charName + " to " + to)
-	if !_is_exist(from, fromID):
-		_create_area(from, fromID)
-	if !_is_exist(to, toID):
-		_create_area(to, toID)
+	if from != null:
+		if !_is_exist(from, fromID):
+			_create_area(from, fromID)
+	if to != null:
+		if !_is_exist(to, toID):
+			_create_area(to, toID)
 #	char.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-	for area in self.get_children():
-		for character in area.get_node("%CharacterContainer").get_children():
+#	for area in self.get_children():
+#		for character in area.get_node("%CharacterContainer").get_children():
 #			print(character.name)
-			if character.name == char.charName:
-				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-				return
+#			if char.charName != null and character.name == char.charName:
+#				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
+#				return
+#			if char.showName != null and character.name == char.showName:
+#				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
+#				return
+	if live:
+		if char.mapChar != null:
+			char.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
+			char.currentLocationID = toID
+			return
+		else:
+			place_character(char, char.get_node("Icon").texture, char.color, toID, to)
 
-	Place_character(char.charName, char.get_node("Icon").texture, char.color, to, toID)
+	#var charName
+	#if char.charName != null:
+		#charName = char.charName
+	#else:
+		#charName = char.showName
+
 
 
 func _on_map_view_camera_zoom_change(value):
@@ -54,9 +73,10 @@ func _on_map_view_camera_zoom_change(value):
 
 
 
-func Place_character(charName, icon, color, to, toID):
-	if !_is_exist(to, toID):
-		_create_area(to, toID)
+func place_character(char, icon, color, toID, to = null):
+	if to != null:
+		if !_is_exist(to, toID):
+			_create_area(to, toID)
 
 	for area in self.get_children():
 		if area.name == toID:
@@ -64,12 +84,24 @@ func Place_character(charName, icon, color, to, toID):
 			newChar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			newChar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			newChar.custom_minimum_size = Vector2(24,24)
-			newChar.name = charName
-			newChar.tooltip_text = charName
+			newChar.name = char.name
+			newChar.tooltip_text = char.name
+			char.mapChar = newChar
+			var disconnection = TextureRect.new()
+			disconnection.texture = disconnectIcon
+			disconnection.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+			disconnection.layout_mode = 1
+			disconnection.set_anchors_preset(Control.PRESET_FULL_RECT)
+			disconnection.self_modulate = Color("ffffff8a")
+			disconnection.visible = false
 			if icon != null:
 				newChar.texture = icon
 				if newChar.texture.resource_path == "res://Assets/Bean.png":
 					newChar.modulate = color
 			#PLACE CHARACTER
 			area.get_node("%CharacterContainer").add_child(newChar)
+			newChar.add_child(disconnection)
 			break
+
+func update_mapCharacter(char):
+	pass

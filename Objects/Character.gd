@@ -5,11 +5,16 @@ var names = []
 var color
 var mapChar
 var disconnectState
+var currentLocationID
 
 func add_name(newName):
 	if !names.has(newName):
 		names.append(newName)
 		$Names.add_item(newName)
+
+func set_color(newColor):
+	color = newColor
+	$Icon.self_modulate = color
 
 func set_icon():
 	pass

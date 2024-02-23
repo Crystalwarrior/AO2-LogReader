@@ -25,62 +25,86 @@ script = ExtResource("1_nrrhj")
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 100.0
+offset_bottom = 105.0
 grow_horizontal = 2
 
-[node name="OpenLogfileButton" type="Button" parent="."]
+[node name="HBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 1149.0
+offset_bottom = 102.0
+
+[node name="Top" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="VBoxContainer" parent="HBoxContainer/Top"]
+layout_mode = 2
+
+[node name="Logfile" type="HBoxContainer" parent="HBoxContainer/Top/HBoxContainer"]
+layout_mode = 2
+
+[node name="OpenLogfileButton" type="Button" parent="HBoxContainer/Top/HBoxContainer/Logfile"]
+layout_mode = 2
 text = "Open Logfile"
 
-[node name="LogfileLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 111.0
-offset_top = 3.0
-offset_right = 231.0
-offset_bottom = 29.0
+[node name="LogfileLabel" type="Label" parent="HBoxContainer/Top/HBoxContainer/Logfile"]
+layout_mode = 2
 text = "Current logfile: "
 
-[node name="LinkAssetsButton" type="Button" parent="."]
-layout_mode = 0
-offset_top = 32.0
-offset_right = 106.0
-offset_bottom = 63.0
+[node name="Assets" type="HBoxContainer" parent="HBoxContainer/Top/HBoxContainer"]
+layout_mode = 2
+
+[node name="LinkAssetsButton" type="Button" parent="HBoxContainer/Top/HBoxContainer/Assets"]
+layout_mode = 2
 text = "Link Assets"
 
-[node name="RefreshButton" type="Button" parent="."]
-layout_mode = 0
-offset_top = 64.0
-offset_right = 106.0
-offset_bottom = 95.0
+[node name="AssetsLabel" type="Label" parent="HBoxContainer/Top/HBoxContainer/Assets"]
+layout_mode = 2
+text = "Current base: "
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Top"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="Bottom" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="HBoxContainer/Bottom"]
+layout_mode = 2
+
+[node name="RefreshButton" type="Button" parent="HBoxContainer/Bottom/Buttons"]
+layout_mode = 2
 text = "Refresh"
 
-[node name="ToggleParsedView" type="Button" parent="."]
-layout_mode = 0
-offset_left = 110.0
-offset_top = 64.0
-offset_right = 267.0
-offset_bottom = 95.0
+[node name="ToggleParsedView" type="Button" parent="HBoxContainer/Bottom/Buttons"]
+layout_mode = 2
 toggle_mode = true
 text = "Toggle Parsed View"
 
-[node name="ToggleLogView" type="Button" parent="."]
-layout_mode = 0
-offset_left = 271.0
-offset_top = 64.0
-offset_right = 402.0
-offset_bottom = 95.0
+[node name="ToggleLogView" type="Button" parent="HBoxContainer/Bottom/Buttons"]
+layout_mode = 2
 toggle_mode = true
 text = "Toggle Log View"
 
-[node name="AssetsLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 111.0
-offset_top = 35.0
-offset_right = 227.0
-offset_bottom = 61.0
-text = "Current base: "
+[node name="CharactersButton" type="Button" parent="HBoxContainer/Bottom/Buttons"]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+text = "Characters"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Bottom"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HScrollBar" type="HScrollBar" parent="HBoxContainer/Bottom/HBoxContainer2"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+max_value = 0.0
+step = 1.0
 
 [node name="FileDialog" type="FileDialog" parent="."]
 title = "Open a File"
@@ -139,16 +163,6 @@ minimap_draw = true
 syntax_highlighter = SubResource("CodeHighlighter_cppi3")
 metadata/_edit_use_anchors_ = true
 
-[node name="Button" type="Button" parent="."]
-layout_mode = 0
-offset_left = 406.0
-offset_top = 64.0
-offset_right = 498.0
-offset_bottom = 95.0
-focus_mode = 0
-toggle_mode = true
-text = "Characters"
-
 [node name="Characters" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
@@ -162,11 +176,12 @@ offset_bottom = 163.0
 unique_name_in_owner = true
 layout_mode = 2
 
-[connection signal="pressed" from="OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
-[connection signal="pressed" from="LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
-[connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]
-[connection signal="toggled" from="ToggleParsedView" to="." method="_on_toggle_parsed_view_toggled"]
-[connection signal="toggled" from="ToggleLogView" to="." method="_on_toggle_log_view_toggled"]
+[connection signal="pressed" from="HBoxContainer/Top/HBoxContainer/Logfile/OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Top/HBoxContainer/Assets/LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bottom/Buttons/RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="toggled" from="HBoxContainer/Bottom/Buttons/ToggleParsedView" to="." method="_on_toggle_parsed_view_toggled"]
+[connection signal="toggled" from="HBoxContainer/Bottom/Buttons/ToggleLogView" to="." method="_on_toggle_log_view_toggled"]
+[connection signal="toggled" from="HBoxContainer/Bottom/Buttons/CharactersButton" to="." method="_on_button_toggled"]
+[connection signal="value_changed" from="HBoxContainer/Bottom/HBoxContainer2/HScrollBar" to="." method="_on_timeline_value_changed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
-[connection signal="toggled" from="Button" to="." method="_on_button_toggled"]

@@ -34,7 +34,6 @@ expand_mode = 3
 
 [node name="Names" type="OptionButton" parent="."]
 layout_mode = 2
-selected = 0
 
 [node name="Name" type="Label" parent="."]
 visible = false
