@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://ddmxeq6e646fp"]
+[gd_scene load_steps=8 format=3 uid="uid://ddmxeq6e646fp"]
 
 [ext_resource type="Script" path="res://Objects/Character.gd" id="1_d0qnn"]
 [ext_resource type="Texture2D" uid="uid://cdpxsjmlhhqds" path="res://Assets/Bean.png" id="1_ov07w"]
 [ext_resource type="Texture2D" uid="uid://bm342d3lsa4qa" path="res://Assets/GuiVisibilityVisible.svg" id="2_ix08b"]
 [ext_resource type="Texture2D" uid="uid://b6dagfaoejst8" path="res://Assets/disconnect.svg" id="3_s7833"]
 [ext_resource type="Texture2D" uid="uid://oiisi4853yoi" path="res://Assets/GuiVisibilityHidden.svg" id="3_swi4v"]
+[ext_resource type="Texture2D" uid="uid://tb7bg7edqrdy" path="res://Assets/lock_open.svg" id="6_w7es8"]
+[ext_resource type="Texture2D" uid="uid://i5m88wihagg1" path="res://Assets/lock_close.svg" id="7_eqgw6"]
 
 [node name="HBoxContainer" type="HBoxContainer"]
 offset_right = 82.0
@@ -46,4 +48,11 @@ size_flags_horizontal = 6
 toggle_mode = true
 texture_normal = ExtResource("2_ix08b")
 texture_pressed = ExtResource("3_swi4v")
+stretch_mode = 3
+
+[node name="Namelock" type="TextureButton" parent="."]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("6_w7es8")
+texture_pressed = ExtResource("7_eqgw6")
 stretch_mode = 3

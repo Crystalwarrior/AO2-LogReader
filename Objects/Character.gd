@@ -11,6 +11,8 @@ func add_name(newName):
 	if !names.has(newName):
 		names.append(newName)
 		$Names.add_item(newName)
+	if !$Namelock.button_pressed:
+		$Names.select($Names.item_count-1)
 
 func set_color(newColor):
 	color = newColor
