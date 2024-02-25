@@ -5,7 +5,7 @@ var names = []
 var color
 var mapChar
 var disconnectState
-var currentLocationID
+var currentLocationID = null
 
 func add_name(newName):
 	if !names.has(newName):

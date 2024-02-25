@@ -63,10 +63,77 @@ text = "Link Assets"
 layout_mode = 2
 text = "Current base: "
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Top"]
+[node name="HBoxContainer2" type="VBoxContainer" parent="HBoxContainer/Top"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Top/HBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 2
+
+[node name="CurrentTime" type="Label" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+text = "00:00:00"
+
+[node name="Slash" type="Label" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+text = "/"
+
+[node name="EndTime" type="Label" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+text = "00:00:00"
+
+[node name="Padding" type="TextureRect" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(12.29, 0)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Top/HBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="DelayLabel" type="Label" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Delay" type="SpinBox" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+mouse_default_cursor_shape = 7
+step = 0.1
+value = 0.5
+update_on_text_changed = true
+suffix = "sec"
+
+[node name="<<" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+focus_mode = 0
+text = "<<"
+
+[node name="<" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+focus_mode = 0
+text = " < "
+
+[node name="LIVE" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+focus_mode = 0
+text = "LIVE"
+
+[node name=">" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+focus_mode = 0
+text = " > "
+
+[node name=">>" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+layout_mode = 2
+focus_mode = 0
+text = ">>"
+
+[node name="Padding" type="TextureRect" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
+custom_minimum_size = Vector2(3.05, 0)
+layout_mode = 2
 
 [node name="Bottom" type="HBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
@@ -178,6 +245,9 @@ layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer/Logfile/OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer/Assets/LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/<<" to="." method="_on_prev_step_pressed"]
+[connection signal="pressed" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/LIVE" to="." method="_on_live_pressed"]
+[connection signal="pressed" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/>>" to="." method="_on_next_movement_pressed"]
 [connection signal="pressed" from="HBoxContainer/Bottom/Buttons/RefreshButton" to="." method="_on_refresh_button_pressed"]
 [connection signal="toggled" from="HBoxContainer/Bottom/Buttons/ToggleParsedView" to="." method="_on_toggle_parsed_view_toggled"]
 [connection signal="toggled" from="HBoxContainer/Bottom/Buttons/ToggleLogView" to="." method="_on_toggle_log_view_toggled"]

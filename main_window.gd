@@ -6,6 +6,9 @@ extends Control
 @onready var folder_dialog: FileDialog = $FolderDialog
 @onready var timeline = $HBoxContainer/Bottom/HBoxContainer2/HScrollBar
 @onready var areas = $"../../Areas"
+@onready var currentLabel = $HBoxContainer/Top/HBoxContainer2/HBoxContainer/CurrentTime
+@onready var endLabel = $HBoxContainer/Top/HBoxContainer2/HBoxContainer/EndTime
+
 
 
 signal movement(char, from, fromID, to, toID)
@@ -136,7 +139,6 @@ func parse_line(line):
 			if currentName != "":
 				currentCharacter.add_name(currentName)
 		if speaker == hostname and line.find("moves from") != -1:
-#			var character = line.split("]")[1].lstrip(" ").split("moves from")[0].rstrip(" ")
 			var from = line.split("] ")[2].split(" to")[0]
 			var fromID = line.split("] ")[1].split("[")[1]
 			var to = line.split("] ")[3].rsplit(".")[0]
@@ -146,6 +148,8 @@ func parse_line(line):
 				startTime = time
 			if time > endTime:
 				endTime = time
+			if currentCharacter.currentLocationID == null:
+				movements.append([currentCharacter.id, fromID, fromID, startTime])
 			movements.append([currentCharacter.id, fromID, toID, time])
 			var live = timeline.value == timeline.max_value
 			areas.movement(currentCharacter, live, toID, to, fromID, from)
@@ -212,8 +216,23 @@ func parse_logfile():
 
 func _update_timeline(live):
 	timeline.max_value = endTime - startTime
+	var endDay = str(Time.get_date_dict_from_unix_time(endTime)["day"])
+	endLabel.text = convertDay(endDay) + " " + Time.get_time_string_from_unix_time(endTime)
 	if live:
 		timeline.value = timeline.max_value
+
+func convertDay(day):
+	var result
+	match day:
+		1:
+			result = str(day) + "st"
+		2:
+			result = str(day) + "nd"
+		3:
+			result = str(day) + "rd"
+		_:
+			result = str(day) + "th"
+	return result
 
 func open_logfile(path):
 	if current_file:
@@ -274,6 +293,8 @@ func _on_button_toggled(button_pressed):
 
 
 func _on_timeline_value_changed(value):
+	var currentDay = Time.get_date_dict_from_unix_time(startTime)["day"]
+	currentLabel.text = convertDay(currentDay) + " " + Time.get_time_string_from_unix_time(timeline.value + startTime)
 	for character in characters:
 		var locationID = _find_charLocation(character.id, value + startTime)
 		if locationID != null and locationID != character.currentLocationID:
@@ -289,3 +310,27 @@ func _find_charLocation(charID, newTime):
 			else:
 				return result
 	return result
+
+func _on_next_movement_pressed():
+	var newTime = endTime
+	var test
+	for movement in movements:
+			if movement[3] > timeline.value + startTime:
+				if movement[3] < newTime:
+					newTime = movement[3]
+					test = movement
+	timeline.value = newTime - startTime
+
+
+func _on_prev_step_pressed():
+	var newTime = startTime
+	if timeline.value != 0:
+		for movement in range(movements.size()-1, 0, -1):
+			if movements[movement][3] < timeline.value + startTime:
+					if movements[movement][3] > newTime:
+						newTime = movements[movement][3]
+	timeline.value = newTime - startTime
+
+
+func _on_live_pressed():
+	timeline.value = endTime
