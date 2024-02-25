@@ -32,3 +32,7 @@ func set_icon():
 	#get_node("Icon/Disconnect").visible = state
 	#if mapChar != null:
 		#mapChar.get_child(0).visible = state
+
+
+func _on_visibility_toggled(toggle):
+		mapChar.visible = !toggle

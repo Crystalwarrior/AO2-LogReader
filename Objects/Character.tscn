@@ -56,3 +56,5 @@ toggle_mode = true
 texture_normal = ExtResource("6_w7es8")
 texture_pressed = ExtResource("7_eqgw6")
 stretch_mode = 3
+
+[connection signal="toggled" from="Visibility" to="." method="_on_visibility_toggled"]
