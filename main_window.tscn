@@ -114,6 +114,7 @@ text = "<<"
 [node name="<" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
 layout_mode = 2
 focus_mode = 0
+toggle_mode = true
 text = " < "
 
 [node name="LIVE" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
@@ -124,6 +125,7 @@ text = "LIVE"
 [node name=">" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
 layout_mode = 2
 focus_mode = 0
+toggle_mode = true
 text = " > "
 
 [node name=">>" type="Button" parent="HBoxContainer/Top/HBoxContainer2/HBoxContainer2"]
@@ -246,7 +248,9 @@ layout_mode = 2
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer/Logfile/OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer/Assets/LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/<<" to="." method="_on_prev_step_pressed"]
+[connection signal="toggled" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/<" to="." method="_on_backwardplay_toggled"]
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/LIVE" to="." method="_on_live_pressed"]
+[connection signal="toggled" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/>" to="." method="_on_play_toggled"]
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/>>" to="." method="_on_next_movement_pressed"]
 [connection signal="pressed" from="HBoxContainer/Bottom/Buttons/RefreshButton" to="." method="_on_refresh_button_pressed"]
 [connection signal="toggled" from="HBoxContainer/Bottom/Buttons/ToggleParsedView" to="." method="_on_toggle_parsed_view_toggled"]

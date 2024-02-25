@@ -8,6 +8,10 @@ extends Control
 @onready var areas = $"../../Areas"
 @onready var currentLabel = $HBoxContainer/Top/HBoxContainer2/HBoxContainer/CurrentTime
 @onready var endLabel = $HBoxContainer/Top/HBoxContainer2/HBoxContainer/EndTime
+@onready var delay = $HBoxContainer/Top/HBoxContainer2/HBoxContainer2/Delay
+@onready var playButton = $"HBoxContainer/Top/HBoxContainer2/HBoxContainer2/>"
+@onready var playbackButton = $"HBoxContainer/Top/HBoxContainer2/HBoxContainer2/<"
+
 
 
 
@@ -34,6 +38,9 @@ var characters = []
 var movements = []
 var startTime
 var endTime = 0
+var timer = 0
+var playing
+var playing_backward
 
 func _process(delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
@@ -41,6 +48,19 @@ func _process(delta):
 			logview.text = current_file.get_as_text()
 			scroll_to_last_line()
 			parse_logfile()
+	if playing and timeline.value != endTime - startTime:
+		if timer <= 0:
+			timeline.value += 1
+			timer = delay.value * 60
+		else:
+			timer -= 1
+
+	if playing_backward == true and timeline.value != 0:
+		if timer <= 0:
+			timeline.value -= 1
+			timer = delay.value * 60
+		else:
+			timer -= 1
 
 
 func generate_shownames():
@@ -334,3 +354,28 @@ func _on_prev_step_pressed():
 
 func _on_live_pressed():
 	timeline.value = endTime
+
+
+func _on_play_toggled(toggled):
+	if toggled:
+		playing_backward = false
+		playing = true
+		playButton.text = "||"
+		playbackButton.text = " < "
+		playbackButton.button_pressed = false
+	else:
+		playing = false
+		playButton.text = " > "
+
+
+
+func _on_backwardplay_toggled(toggled):
+	if toggled:
+		playing = false
+		playing_backward = true
+		playbackButton.text = "||"
+		playButton.text = " > "
+		playButton.button_pressed = false
+	else:
+		playing_backward = false
+		playbackButton.text = " < "
