@@ -1,9 +1,11 @@
 extends Control
 
-@onready var logview: TextEdit = $LogView
-@onready var parsed_view: RichTextLabel = $PanelContainer/ParsedView
-@onready var file_dialog: FileDialog = $FileDialog
-@onready var folder_dialog: FileDialog = $FolderDialog
+@onready var logview_window: Window = %LogViewWindow
+@onready var logview: TextEdit = %LogViewLabel
+@onready var parsed_view_window: Window = %ParsedViewWindow
+@onready var parsed_view: RichTextLabel = %ParsedViewLabel
+@onready var file_dialog: FileDialog = %FileDialog
+@onready var folder_dialog: FileDialog = %FolderDialog
 @onready var timeline = $HBoxContainer/Bottom/HBoxContainer2/HScrollBar
 @onready var areas = $"../../Areas"
 @onready var currentLabel = $HBoxContainer/Top/HBoxContainer2/HBoxContainer/CurrentTime
@@ -301,11 +303,11 @@ func _on_refresh_button_pressed():
 
 
 func _on_toggle_log_view_toggled(button_pressed):
-	logview.visible = button_pressed
+	logview_window.visible = button_pressed
 
 
 func _on_toggle_parsed_view_toggled(button_pressed):
-	$PanelContainer.visible = button_pressed
+	parsed_view_window.visible = button_pressed
 
 
 func _on_button_toggled(button_pressed):
@@ -379,3 +381,13 @@ func _on_backwardplay_toggled(toggled):
 	else:
 		playing_backward = false
 		playbackButton.text = " < "
+
+
+func _on_parsed_view_window_close_requested():
+	parsed_view_window.hide()
+	%ToggleParsedView.button_pressed = false
+
+
+func _on_log_view_window_close_requested():
+	logview_window.hide()
+	%ToggleLogView.button_pressed = false

@@ -29,17 +29,18 @@ offset_bottom = 105.0
 grow_horizontal = 2
 
 [node name="HBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 1.0
-offset_right = 1149.0
-offset_bottom = 102.0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 101.0
+grow_horizontal = 2
 
 [node name="Top" type="HBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 
 [node name="HBoxContainer" type="VBoxContainer" parent="HBoxContainer/Top"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Logfile" type="HBoxContainer" parent="HBoxContainer/Top/HBoxContainer"]
 layout_mode = 2
@@ -50,7 +51,9 @@ text = "Open Logfile"
 
 [node name="LogfileLabel" type="Label" parent="HBoxContainer/Top/HBoxContainer/Logfile"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Current logfile: "
+text_overrun_behavior = 3
 
 [node name="Assets" type="HBoxContainer" parent="HBoxContainer/Top/HBoxContainer"]
 layout_mode = 2
@@ -61,11 +64,12 @@ text = "Link Assets"
 
 [node name="AssetsLabel" type="Label" parent="HBoxContainer/Top/HBoxContainer/Assets"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Current base: "
+text_overrun_behavior = 3
 
 [node name="HBoxContainer2" type="VBoxContainer" parent="HBoxContainer/Top"]
 layout_mode = 2
-size_flags_horizontal = 3
 alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Top/HBoxContainer2"]
@@ -148,14 +152,16 @@ layout_mode = 2
 text = "Refresh"
 
 [node name="ToggleParsedView" type="Button" parent="HBoxContainer/Bottom/Buttons"]
+unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
-text = "Toggle Parsed View"
+text = "Parsed View"
 
 [node name="ToggleLogView" type="Button" parent="HBoxContainer/Bottom/Buttons"]
+unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
-text = "Toggle Log View"
+text = "Log View"
 
 [node name="CharactersButton" type="Button" parent="HBoxContainer/Bottom/Buttons"]
 layout_mode = 2
@@ -176,6 +182,7 @@ max_value = 0.0
 step = 1.0
 
 [node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
 title = "Open a File"
 initial_position = 1
 size = Vector2i(600, 500)
@@ -185,6 +192,7 @@ access = 2
 filters = PackedStringArray("*.log;Log File")
 
 [node name="FolderDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(600, 500)
@@ -192,19 +200,23 @@ ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="ParsedViewWindow" type="Window" parent="."]
+unique_name_in_owner = true
+title = "Parsed View"
+initial_position = 1
+size = Vector2i(512, 512)
 visible = false
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.434896
+
+[node name="PanelContainer" type="PanelContainer" parent="ParsedViewWindow"]
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 100.0
-offset_right = 1.0
+grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-metadata/_edit_use_anchors_ = true
 
-[node name="ParsedView" type="RichTextLabel" parent="PanelContainer"]
+[node name="ParsedViewLabel" type="RichTextLabel" parent="ParsedViewWindow/PanelContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 2
 mouse_force_pass_scroll_events = false
@@ -213,16 +225,19 @@ scroll_following = true
 selection_enabled = true
 metadata/_edit_use_anchors_ = true
 
-[node name="LogView" type="TextEdit" parent="."]
+[node name="LogViewWindow" type="Window" parent="."]
+unique_name_in_owner = true
+title = "Log View"
+initial_position = 1
+size = Vector2i(512, 512)
 visible = false
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.437
+
+[node name="LogViewLabel" type="TextEdit" parent="LogViewWindow"]
+unique_name_in_owner = true
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.575989
-offset_top = 100.0
-grow_horizontal = 0
+grow_horizontal = 2
 grow_vertical = 2
 mouse_force_pass_scroll_events = false
 theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
@@ -230,15 +245,17 @@ editable = false
 wrap_mode = 1
 minimap_draw = true
 syntax_highlighter = SubResource("CodeHighlighter_cppi3")
-metadata/_edit_use_anchors_ = true
 
 [node name="Characters" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
-layout_mode = 0
-offset_left = 405.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.494
+anchor_right = 0.494
+offset_left = -164.088
 offset_top = 101.0
-offset_right = 734.0
+offset_right = 164.912
 offset_bottom = 163.0
 
 [node name="CharacterList" type="HFlowContainer" parent="Characters"]
@@ -259,3 +276,5 @@ layout_mode = 2
 [connection signal="value_changed" from="HBoxContainer/Bottom/HBoxContainer2/HScrollBar" to="." method="_on_timeline_value_changed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
+[connection signal="close_requested" from="ParsedViewWindow" to="." method="_on_parsed_view_window_close_requested"]
+[connection signal="close_requested" from="LogViewWindow" to="." method="_on_log_view_window_close_requested"]
