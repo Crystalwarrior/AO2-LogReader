@@ -33,8 +33,7 @@ var last_date_modified
 
 var hostname: String
 
-
-#{"showname": "charfolder"}
+var initial_logread = false
 var shownames: Dictionary = {}
 var characters = []
 var movements = []
@@ -89,8 +88,11 @@ func generate_shownames():
 								if showname and showname != file_name:
 									shownames[showname] = file_name
 									print("Showname '" + showname + "' now associated with charfolder " + file_name)
+								if !shownames.has(showname):
+									shownames[file_name] = null
 			file_name = dir.get_next()
-
+	print(shownames)
+	_find_avatars()
 
 func parse_line(line):
 	if not line.begins_with("[") or not line.contains("GMT]"):
@@ -160,6 +162,10 @@ func parse_line(line):
 		for currentName in nameArray:
 			if currentName != "":
 				currentCharacter.add_name(currentName)
+				if initial_logread == false:
+					var avatar = _find_avatar(currentCharacter)
+					if currentCharacter.avatar == null and avatar != null:
+						currentCharacter.set_avatar(avatar)
 		if speaker == hostname and line.find("moves from") != -1:
 			var from = line.split("] ")[2].split(" to")[0]
 			var fromID = line.split("] ")[1].split("[")[1]
@@ -201,6 +207,23 @@ func create_character(id):
 
 	return newChar
 
+func _find_avatar(char):
+	var avatar = null
+	for showname in shownames.keys():
+		for currentName in char.names:
+			if currentName == showname:
+				avatar = get_speakerIcon(shownames[showname])
+			if currentName == shownames[showname]:
+				return get_speakerIcon(shownames[showname])
+	return avatar
+
+func _find_avatars():
+	for showname in shownames.keys():
+		for character in characters:
+			for currentName in character.names:
+				if currentName == showname or currentName == shownames[showname]:
+					character.set_avatar(get_speakerIcon(shownames[showname]))
+
 func _clean_name(speaker):
 	var speakerArray = []
 	if speaker.split("(").size() > 1:
@@ -230,11 +253,15 @@ func get_speakerIcon(charfolder):
 		return null
 
 func parse_logfile():
+	initial_logread = true
 	parsed_view.clear()
 	hostname = ""
 	var lines = logview.text.split("\n")
 	for line in lines:
 		parse_line(line)
+	initial_logread = false
+	if !shownames.is_empty():
+		_find_avatars()
 
 func _update_timeline(live):
 	timeline.max_value = endTime - startTime

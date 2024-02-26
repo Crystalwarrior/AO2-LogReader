@@ -97,7 +97,7 @@ func place_character(char, icon, color, toID, to = null):
 			if icon != null:
 				newChar.texture = icon
 				if newChar.texture.resource_path == "res://Assets/Bean.png":
-					newChar.modulate = color
+					newChar.self_modulate = color
 			#PLACE CHARACTER
 			area.get_node("%CharacterContainer").add_child(newChar)
 			newChar.add_child(disconnection)

@@ -4,7 +4,8 @@ var id
 var names = []
 var color
 var mapChar
-var disconnectState
+var avatar
+var disconnected
 var currentLocationID = null
 
 func add_name(newName):
@@ -18,8 +19,12 @@ func set_color(newColor):
 	color = newColor
 	$Icon.self_modulate = color
 
-func set_icon():
-	pass
+func set_avatar(texture):
+	$Icon.self_modulate = Color.WHITE
+	$Icon.texture = texture
+	if mapChar:
+		mapChar.self_modulate = Color.WHITE
+		mapChar.texture = texture
 
 #func change_connectionState(state):
 	#if state:
