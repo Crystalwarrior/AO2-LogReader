@@ -88,10 +88,7 @@ func generate_shownames():
 								if showname and showname != file_name:
 									shownames[showname] = file_name
 									print("Showname '" + showname + "' now associated with charfolder " + file_name)
-								if !shownames.has(showname):
-									shownames[file_name] = null
 			file_name = dir.get_next()
-	print(shownames)
 	_find_avatars()
 
 func parse_line(line):
@@ -208,21 +205,20 @@ func create_character(id):
 	return newChar
 
 func _find_avatar(char):
-	var avatar = null
-	for showname in shownames.keys():
-		for currentName in char.names:
-			if currentName == showname:
-				avatar = get_speakerIcon(shownames[showname])
-			if currentName == shownames[showname]:
-				return get_speakerIcon(shownames[showname])
+	var avatar = char.avatar
+	for currentName in char.names:
+		var texture = null
+		if currentName in shownames:
+			texture = get_speakerIcon(shownames[currentName])
+		else:
+			texture = get_speakerIcon(currentName)
+		if texture is ImageTexture:
+			avatar = texture
 	return avatar
 
 func _find_avatars():
-	for showname in shownames.keys():
-		for character in characters:
-			for currentName in character.names:
-				if currentName == showname or currentName == shownames[showname]:
-					character.set_avatar(get_speakerIcon(shownames[showname]))
+	for character in characters:
+		character.set_avatar(_find_avatar(character))
 
 func _clean_name(speaker):
 	var speakerArray = []
@@ -237,13 +233,14 @@ func _clean_name(speaker):
 
 func _find_character(nameArray):
 	for character in characters:
-		for currentName in nameArray:
-			for alias in character.names:
-				if alias == currentName:
-					return character
+		for alias in character.names:
+			if alias in nameArray:
+				return character
 	return null
 
-func get_speakerIcon(charfolder):
+func get_speakerIcon(charfolder: String):
+	if charfolder.is_empty():
+		return null
 	var speaker_icon = asset_folder_path + "/characters/" + charfolder + "/char_icon.png"
 	if FileAccess.file_exists(speaker_icon):
 		# TODO: cache this, ideally by using Godot's resource system properly
