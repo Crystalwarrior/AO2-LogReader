@@ -251,12 +251,10 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.494
-anchor_right = 0.494
-offset_left = -164.088
-offset_top = 101.0
-offset_right = 164.912
-offset_bottom = 163.0
+anchor_bottom = 1.0
+offset_top = 105.0
+offset_right = 355.0
+grow_vertical = 2
 
 [node name="CharacterList" type="HFlowContainer" parent="Characters"]
 unique_name_in_owner = true
