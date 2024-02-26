@@ -160,6 +160,7 @@ func parse_line(line):
 			currentCharacter = create_character(characters.size())
 		if charfolder != "":
 			currentCharacter.charfolder = charfolder
+			currentCharacter.add_name(charfolder)
 		for currentName in nameArray:
 			if currentName != "":
 				currentCharacter.add_name(currentName)
