@@ -1,6 +1,7 @@
 extends HBoxContainer
 
 var id
+var charfolder
 var names = []
 var color
 var mapChar

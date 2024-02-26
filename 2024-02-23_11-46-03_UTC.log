@@ -1,0 +1,655 @@
+Joined server Killing Fever Online hosted on address 135.148.43.158:50000 on Fri Feb 23 11:46:03 2024 GMT
+[OOC][Fri Feb 23 11:46:08 2024 GMT] $: 📟MOTD📟
+📟MOTD📟 👋Welcome to Killing Fever Online, KFO for short. 💪This server responsible for Attorney Online 2.8.X, 2.9.X and 2.10.0 updates! 📀It's also responsible for the KFO-Server codebase, currently used by Vanilla!
+🌐Our website: https://crystalwarrior.github.io/KFO-website 🤖Our discord: http://discord.gg/6jk3bWS 🐙Our github: https://github.com/Crystalwarrior/KFO-Server 
+
+[OOC][Fri Feb 23 11:46:08 2024 GMT] $: 🌍HUB [0] Main INFO🌍
+Welcome! This hub is suited for Casing and other familiar activities. If you want to enjoy the hub system, please use /hub to see available hubs.
+
+[OOC][Fri Feb 23 11:46:19 2024 GMT] $: Changed to hub [5] Roleplay 5.
+[OOC][Fri Feb 23 11:46:20 2024 GMT] $: 🚶Changed to area: [0] Lobby
+📃Description: The main dropzone for the RP.
+Clients in area:
+  ◽ [0] Polly
+[OOC][Fri Feb 23 11:46:20 2024 GMT] $: [0] Polly enters from Hub [0] Main.
+[OOC][Fri Feb 23 11:46:27 2024 GMT] $: [0] Polly (Fantos) is GM in this hub now.
+[OOC][Fri Feb 23 11:46:27 2024 GMT] $: You are now hidden from /getarea and playercounts.
+[OOC][Fri Feb 23 11:46:48 2024 GMT] $: Your current remote listen option is: ALL
+[OOC][Fri Feb 23 11:50:33 2024 GMT] $: Invalid command: load. Use /help to find up-to-date commands.
+[OOC][Fri Feb 23 11:50:37 2024 GMT] $: No such command or submodule (load) has been found in the help docs.
+[OOC][Fri Feb 23 11:50:46 2024 GMT] $: No such command or submodule (map) has been found in the help docs.
+[OOC][Fri Feb 23 11:50:59 2024 GMT] $: List hubs, or go to another hub.
+Usage: /hub [id/name]
+[OOC][Fri Feb 23 11:52:04 2024 GMT] $: Hub clearing initiated...
+[OOC][Fri Feb 23 11:52:04 2024 GMT] $: Success, loading as storage/hubs/demoTesting.yaml...
+[OOC][Fri Feb 23 11:52:05 2024 GMT] $: Success, sending ARUP and refreshing music...
+[OOC][Fri Feb 23 11:52:27 2024 GMT] $: You must be authorized to load the default hub!
+[OOC][Fri Feb 23 11:52:32 2024 GMT] $: Invalid command: list_hub. Use /help to find up-to-date commands.
+[OOC][Fri Feb 23 11:52:43 2024 GMT] $: You must be authorized to do that.
+[OOC][Fri Feb 23 11:53:33 2024 GMT] CLIENT: You were granted the Disable Modcalls button.
+[OOC][Fri Feb 23 11:53:33 2024 GMT] $: Logged in as a moderator.
+[OOC][Fri Feb 23 11:53:38 2024 GMT] $: Available hubs:
+- Reminiscing
+- boss-doodle
+- demoTesting
+- RPDRT
+- Persona Roleplay
+- DRVF_Ch2Backup
+- HOTEL-PARTY
+- Session2
+- Gnosia_Y007_backup
+- MCH
+- PEERSONARP
+- Arbitrium Game
+- Distant's GoM
+- PeckEON
+- CYBER
+- TheRevolversChamber
+- GlaciesSilva_VA
+- drcite_ch1_trialday
+- vc_map
+- salsaem
+- Twinbrook
+- DRDR cCh1
+- PERSONARP
+- CW_DGEoE
+- Theocracy
+- Fucking Cave that took 3 sessions
+- Dantes' House
+- Whodunnit_Y007_Day
+- baka
+- skgoo
+- MaidAkiba
+- Titanic2
+- asdaso
+- Arcanvidelia
+- DRVF_Map
+- PeckValmont
+- DELSNEY1
+- Peck_CP
+- MAI1shot
+- drcite
+- Cleemee's GOM
+- backrooms
+- Session2B
+- PeckEvandaleForest
+- RPD F2-2
+- BSK_Tykeria
+- Baker Witch Trial for Doodle Opening Statement
+- Mikazuki_CFSchool
+- PeckHighwynneMountain
+- Enigma_Robotics
+- PeckVoid
+- RPDFloor1
+- JesterPCoN
+- MPH_AotTS_Yeets
+- DRCiTE_Prologue
+- tatch1
+- PeckRoseleyCanyon
+- Titanic 2
+- Peck_SMIT
+- Lobotomy
+- Mikuel_DE-hut
+- RPDf1
+- Judgement
+- AveriTT2
+- DE_Bar
+- CW_AmbidexFate
+- BSK_1
+- v3au
+- NSFCJ
+- CW_EMOneOff
+- PeckNor
+- Ravens Feast
+- PeckRavenholm
+- MRF-FYAD2
+- CoF_Jester
+- CW_DGFacility
+- CW_NonaryRebirth
+- Nanaii
+- JesterRoS
+- Gemwars2_Judgement
+- FYAD3
+- OotE_Session2
+- HOTEL_PARTY
+- DRDR Ch1 Deadly
+- GTWD
+- Deemoronpa
+- Petra_BIGWETNOODLE
+- botc_backup
+- DMTEST
+- TotG Session 3
+- captainsonarv2
+- DRClassTrial
+- AcerRT
+- Manor
+- MPH_AotTS_Diamant
+- Jester_EoD2
+- BigBrotherDay2.5
+- botc
+- PeckJourney
+- Izayomi Castle Path
+- PeckLowerNor
+- ISA
+- DREETrial0
+- DALArdon
+- NORP
+- bababooey
+- DeSu
+- YTTD
+- Adolf
+- TWEWY
+- Mikuel_DE-android
+- DALKatops
+- Peck_LS
+- Tayfun's GOM
+- Hanged
+- Theocracy_VA
+- EdgeRP_YTTD
+- ER_ToM
+- CW_HunterGame
+- GlaciesSilva
+- Peck_Vault
+- Infinity Session 5
+- ClassTrial_RegalPrincess
+- RPDf2
+- shopnsave
+- Whodunnit_Y007_Backup
+- JesterCult
+- Etha_TheMemoryGame1
+- BigBrotherRound3.5
+- FateMuseum
+- _Casey_ParallelSerenade
+- WTCourt
+- AveriDAL
+- FNAF1Better
+- phas_tanglewood
+- GoM Distant
+- Gin_Shades
+- GMGemwars2_Wheel
+- Whodunnit_Y007_Alarm
+- TestD2
+- cybercity_VA
+- TotG Session 4
+- guava_pandemicgame
+- CW_AmbiChromav2
+- Purgatory
+- mhas0_chess
+- Blood on the Clocktower.
+- 999epic
+- Jester_EoD3
+- OotE 1
+- MonocruiseUnfinished
+- SURVIVAL_GAME
+- gundamfight
+- Distant gom
+- cave
+- BigBrotherRound3
+- Tsukihana
+- Pandemic Game
+- WOLPraesto
+- BirthMECode_Y007_backup
+- YTTD pre game
+- Misthill Swamp
+- Whodunnit1
+- Noiks_dontescape
+- TFH_GT
+- UdabeseonStorm_VA
+- shopnsave_backup
+- deeznutsDRDP
+- EntryExamFix2
+- Noiks_Ambidex
+- BirthMECode_Y007_Evi
+- atskg
+- Foolsgame
+- Forest Village(Jester)
+- PeckWintersEdge
+- Facility_E
+- DRDR Ch1 Session3
+- MPH_AotTS
+- DRDR Ch1 Session1
+- BirthMECode_Y007_Evi_backup
+- DRDR Ch1
+- Harmony
+- truthsturnabout
+- PeckMisthillSwamp
+- Fury_Twoshot
+- last concert
+- ES1-LH
+- Ark_VA
+- Argus
+- N_Noir3
+- DRRAChapterOne
+- GW2Pro
+- Udabeseon_VA
+- BigBrotherDay4
+- WhodunnitS1_Y007_Backup
+- SoF
+- EntryExam01Fixated
+- BSK Tykeria
+- BSK_Mystina
+- Gnosia_Y007
+- Jojo
+- Mikuel_DE-androids
+- OotE_Base
+- TheTrials2
+- Pandemic 2
+- Hero's kitchen
+- TGR
+- PeckFreybeach
+- Deathnote
+- SW_ToM
+- PeckMoltenSummit
+- ZTD
+- Dont_Escape
+- DRVF_session1
+- guava_hunter.yaml
+- 9L_Sphinx
+- Izayomi Capital
+- Peck_Tower
+- old_EntryExam0
+- aai_office
+- LeftInDark
+- FYAD 3
+- drcite_ch1s2
+- OotE1
+- ES1-LH-Y007
+- Peck_Camp
+- WhodunnitS1_Y007_Night
+- DeemoronpaMorning
+- Help
+- HimeLobCorpMiddleFloor
+- RPD1-2
+- CW_UmbraTower
+- DALArdun
+- drra
+- BFSAM Remix
+- RoadTrip-Y007
+- MHACOS D1
+- Peck_CorpseParty
+- Jester_TitanMaze
+- Brawl
+- Whodunnit_Y007_Night
+- Alaska2
+- guavasusover
+- BigBrotherRound4
+- EC-District7
+- PeckNobleHouses
+-  MRF-FYAD2
+- Peck_Dead3
+- TwinbrookBeta
+- Mikazuki_CFCity
+- 999Casino
+- sunset.ogg
+- GameOfFate%3ADiR_Y007
+- BigBrother
+- Mikuel_hgw
+- Alaska1
+- NWCapital_ToM
+- PeckRemingtonIndustrial2
+- TotG Intro
+- MockTrial_RegalPrincess
+- Enigma
+- UtsuroshimaMonocruise
+- TheTrials1
+- Peck_Resort
+- CW_AmbidexRuby
+- Mikuel_dangit
+- PeckCamp
+- TestD1
+- BigBrotherFTE
+- DALIssi\
+- HHRGoM_Jester
+- Devil Survivor
+- tatch4
+- testing
+- Yureimura
+- captainsonarv1
+- Deemoronpa_Night
+- captainsonar
+- Blood on the Clocktower
+- CW_DREoE
+- hub_VA
+- TitanicMap
+- SignatureStudios
+- test
+- Udabeaeon_VA
+- AcerEE
+- CW_AmbidexDiscussion
+- End-ExistenceLSO
+- DALAgrilow
+- RedWoodApartments
+- CNight_WorldTour
+- Mikuel_FYAD
+- Peck_HalfLifeCity
+- 999cringe
+- CoolGuyHubTM
+- OotE_Session
+- EntryExamfix01
+- EntryExamFix3
+- OotE Testsession
+- CW_TitanicHunterGame
+- 999puzzles
+- EC-District03
+- AAICasingLastConcert
+- Test
+- Sallit's
+- IBoE
+- RoadTrip
+- Peck_NorwellTrain
+- HunterGameMapV2
+- NONARY_ESCAPE
+- PeckBarron
+- OotE_Session1
+- Session 5b
+- PeckTower
+- e
+- BKS_MAKESURE
+- FoT
+- Clocktower
+- DMPF
+- DALCalles
+- AveriAB
+- Festival
+- Shojo_Enterprise
+- tay barp
+- Paradoxs_Paradise
+- CW_BarRP
+- BSK_Pharis
+- DRDR Ch1 Session2
+- DHOH1
+- DALPraesto
+- KING GAME
+- WitchTrialCourt
+- MPH_AotTS_Side%3Cnum%3E1
+- TotG Moscow
+- Utsuroshima1stIsland
+- Fucking
+- Pharis
+- Labool
+- SoA
+- ER1-LH-Y007
+- UPC
+- ESCAPE_GAME
+- Casey_ParallelSerenade
+- CW_AmbidexDfS
+- EntryExam0
+- DHOH 1
+- CW_AmbidexChromatic
+- FNaF1
+- drra_s2
+- OotE Skullcave
+- 999
+- DALIssi
+- GnosiaFullMap
+- phasmophobia
+- tayfun
+- TaTTest
+- PeckCorax
+- [DN] The First
+- ISA2
+- tatch5
+- DoughHub
+- JesterPEoN
+- PeckDepths
+- Pokemon
+- Crepuscule
+- WOLSalvare
+- PeckUpperNor
+- Erasure
+- mikuel-barp
+- SalsaMansion
+- ONUWW
+- guavasus
+- BirthMECode_Y007
+- YTTD_GL
+- Peck_NorwellMines
+- DeemoronpaNight
+- Yak Testing
+- distantrp
+- dr1
+- MB_ToM
+- TotG Session 2
+- ClassTrial
+- TestMap
+- PeckRemingtonIndustrial
+- Harmony 
+- GameOfFate%3ADiR_Y007_Backup
+- 9L_Carnival
+- tatch3
+- FNAF1Usable
+- MPH_ToI,LaD
+- ConspiracyMall
+- PreNC_ToM
+- Cold_Crimson2
+- EscapeRoom_Study
+- MPH_AotTS_Marines
+- EntryExam01fix
+- 999_puzzletest
+- Regal_Princess
+- LASTCONCERT
+- Mikazuki Cardcaptors
+- PeckBall
+- MM_Skeld
+- DEATH_SENTENCE
+- Gakkoichi
+- MIPlaneMap
+- Driablon_VA
+- EntryExam00
+- EntryExamHELL
+- DRCiTE_Ch1
+- a
+- TotG Tokyo
+- Tayfun barp
+- BigBrotherDay2
+- [DN] The First - Deadly Life
+- TDWT
+- DRDR End
+- Peck_Dead1
+- AcerTheTrials
+- DALIsland
+- aologtest
+- Inbetween
+- VA_cybercity
+- Sunset
+- PeckEliteHouses
+- OotE_testsession
+- EntryExam1
+- PeckResort
+- Distant
+- BSK_Ebisu
+- GMGemwars2_Devil
+- RisingTrails
+- drcite_ch1deadly
+- AcerHub
+- DRRAChapter1
+- _AcerRT
+- WhodunnitS1_Y007
+- Peck_Dead2
+- Mikuel_ThatOneNamelessBar
+- World
+- BSK_Frontier
+- Titanicc
+- EscapeEffect
+- Cold_Crimson1
+- BSK_Faefnis
+- Base_Mansion
+- cw_captainsonar
+- NC_ToM
+- Titanic
+- Whodunnit_S1_Y007
+- PeckAW
+- gay
+- CW_AmbidexGame
+- Phasmophobia
+- DRVF_Deadly
+- LoveSyndrome_Mansion
+- TitanicMap2
+- tatch6
+- Carnival
+- Jester_Johto
+- Jester_EoD1
+- DRCiTE_Prologue_Finished
+- Festival Session
+- tatpara
+- guava_hunter
+- Hermit
+- Save
+- drcite_ch1_deadly
+- Shinku Temple
+- ChallengeManor
+- fuck
+- SalsaOneshot
+- DALKata
+- GoM
+- CW_EuthanasiaMonarchy
+- CW_FearfulMansion
+- DRFV_Map
+- Borderland0
+- EntryExamFix
+- No Clue Hospital map
+- pollywip
+- barp
+- BigBrotherDay5
+- botctitanic
+- guava_deadlast
+- CW_RoomEscapeRGB
+- Phsris
+- HunterGameMap1
+- SinfulNeighbor
+- DALArk
+- EntryExam01
+- CITE2wip
+- Jester_Clue
+- Sunday Killing Game One-Off
+- CW_EscapeRoomRGB
+- Peck_Norwell
+- BigBrotherDay4.5
+- MHACOS
+- WertemFNAF1
+- BARP Tayfun
+- TMW
+- moment
+- NORPA
+- Mikazuki_ND
+- Monocruise
+- MHAKDI
+- MPH_AotTS_Side_num_1
+- PeckCodex1
+- PokemonMysteryFates
+- tatch6%5C
+- OotE test
+- DALXes
+- DRNG
+- Matthewmwps BFSAM REMIX
+- DRTT
+- Duel Noir
+- DALTabel
+- Hymelia
+- FNAF1
+- wew
+- amongus
+- FNaF 1
+- BigBrother2
+- fateflieslast
+- MCOC
+- Whodunnit_Y007
+- SURVIVAL GAME
+- CALLES
+- EntryExamFinalFix
+- EntryExamClassTrial
+- ArcadeCup
+- BITCH
+- Peck_London
+- fatelandsfirst
+- Insomniac_HunterGame
+- FunMuseum
+- backroomspara
+- AcerTT
+- PLL
+- Harmonuy
+[OOC][Fri Feb 23 11:55:03 2024 GMT] $: Hub clearing initiated...
+[OOC][Fri Feb 23 11:55:03 2024 GMT] $: Success, loading as storage/hubs/testing.yaml...
+[OOC][Fri Feb 23 11:55:03 2024 GMT] $: Success, sending ARUP and refreshing music...
+[OOC][Fri Feb 23 11:55:16 2024 GMT] $: Hub clearing initiated...
+[OOC][Fri Feb 23 11:55:16 2024 GMT] $: Position set to judgestand.
+[OOC][Fri Feb 23 11:55:16 2024 GMT] $: Success, loading as storage/hubs/test.yaml...
+[OOC][Fri Feb 23 11:55:16 2024 GMT] $: Success, sending ARUP and refreshing music...
+[OOC][Fri Feb 23 11:55:28 2024 GMT] $: Hub clearing initiated...
+[OOC][Fri Feb 23 11:55:28 2024 GMT] $: Success, loading as storage/hubs/Test.yaml...
+[OOC][Fri Feb 23 11:55:28 2024 GMT] $: Success, sending ARUP and refreshing music...
+[OOC][Fri Feb 23 11:55:45 2024 GMT] $: Hub clearing initiated...
+[OOC][Fri Feb 23 11:55:45 2024 GMT] $: Success, loading as storage/hubs/TestMap.yaml...
+[OOC][Fri Feb 23 11:55:45 2024 GMT] $: Success, sending ARUP and refreshing music...
+[OOC][Fri Feb 23 11:56:19 2024 GMT] $: Hub clearing initiated...
+[OOC][Fri Feb 23 11:56:19 2024 GMT] $: Success, loading as storage/hubs/aologtest.yaml...
+[OOC][Fri Feb 23 11:56:19 2024 GMT] $: Success, sending ARUP and refreshing music...
+[OOC][Fri Feb 23 11:57:27 2024 GMT] $: Changed to hub [0] Main.
+[OOC][Fri Feb 23 11:57:27 2024 GMT] $: [0] Polly (Fantos) is no longer GM in this hub.
+[OOC][Fri Feb 23 11:57:27 2024 GMT] $: You are no longer hidden from /getarea and playercounts.
+[OOC][Fri Feb 23 11:57:28 2024 GMT] $: 🚶Changed to area: [0] Lobby (users: 2)  [IDLE]
+📃Description: Use /area or A/M to see available areas. Use /hub to see different role-play zones. Evidence for a snippet of the rules. Enjoy!
+Clients in area:
+  ◾ [1] Ron (20847)
+  ◽ [M][0] Polly <judgestand> (20847): Fantos
+[OOC][Fri Feb 23 11:57:28 2024 GMT] $: [0] Polly enters from Hub [5] Roleplay 5.
+[OOC][Fri Feb 23 11:57:28 2024 GMT] $: 🌍HUB [0] Main INFO🌍
+Welcome! This hub is suited for Casing and other familiar activities. If you want to enjoy the hub system, please use /hub to see available hubs.
+
+[OOC][Fri Feb 23 11:57:37 2024 GMT] $: Changed to hub [5] Roleplay 5.
+[OOC][Fri Feb 23 11:57:37 2024 GMT] $: 🚶Changed to area: [0] Lobby (users: 1) 
+📃Description: The main dropzone for the RP.
+Clients in area:
+  ◽ [M][0] Polly <judgestand> (20847): Fantos
+[OOC][Fri Feb 23 11:57:37 2024 GMT] $: [0] Polly enters from Hub [0] Main.
+[OOC][Fri Feb 23 11:57:48 2024 GMT] $: [0] Polly (Fantos) is GM in this hub now.
+[OOC][Fri Feb 23 11:57:48 2024 GMT] $: You are now hidden from /getarea and playercounts.
+[OOC][Fri Feb 23 11:57:55 2024 GMT] $: Your current remote listen option is: ALL
+[OOC][Fri Feb 23 12:08:02 2024 GMT] $: [1] Ron enters from Hub [0] Main.
+[OOC][Fri Feb 23 12:09:08 2024 GMT] $: Area Lobby has been linked with 1 (two-way).
+[OOC][Fri Feb 23 12:09:20 2024 GMT] $: [1] Ron moves from [0] Lobby to [1] Main.
+[OOC][Fri Feb 23 12:09:28 2024 GMT] $: [1] Ron moves from [1] Main to [2] Smoking.
+[OOC][Fri Feb 23 12:09:33 2024 GMT] $: [1] Ron moves from [2] Smoking to [3] Bathroom.
+[OOC][Fri Feb 23 12:11:01 2024 GMT] $: [1] Ron moves from [3] Bathroom to [2] Smoking.
+[OOC][Fri Feb 23 12:11:12 2024 GMT] $: [1] Ron moves from [2] Smoking to [1] Main.
+[OOC][Fri Feb 23 12:11:21 2024 GMT] $: [1] Ron moves from [1] Main to [2] Smoking.
+[OOC][Fri Feb 23 12:13:42 2024 GMT] $: [1] Ron moves from [2] Smoking to [1] Main.
+[OOC][Fri Feb 23 12:13:50 2024 GMT] $: [1] Ron moves from [1] Main to [5] Lounge.
+[OOC][Fri Feb 23 12:14:08 2024 GMT] $: [1] Ron moves from [5] Lounge to [4] Dining Room.
+[OOC][Fri Feb 23 12:24:24 2024 GMT] $: [1] Ron moves from [4] Dining Room to [5] Lounge.
+[OOC][Fri Feb 23 12:24:28 2024 GMT] $: [1] Ron moves from [5] Lounge to [4] Dining Room.
+[OOC][Fri Feb 23 12:24:40 2024 GMT] $: [1] Ron moves from [4] Dining Room to [5] Lounge.
+[OOC][Fri Feb 23 12:24:42 2024 GMT] $: [1] Ron moves from [5] Lounge to [1] Main.
+[OOC][Fri Feb 23 12:25:17 2024 GMT] $: [1] Ron moves from [1] Main to [5] Lounge.
+[OOC][Fri Feb 23 12:25:19 2024 GMT] $: [1] Ron moves from [5] Lounge to [4] Dining Room.
+[OOC][Fri Feb 23 12:25:27 2024 GMT] $: [1] Ron moves from [4] Dining Room to [6] Kitchen.
+[OOC][Fri Feb 23 12:25:29 2024 GMT] $: [1] Ron moves from [6] Kitchen to [4] Dining Room.
+[OOC][Fri Feb 23 12:25:31 2024 GMT] $: [1] Ron moves from [4] Dining Room to [6] Kitchen.
+[OOC][Fri Feb 23 12:28:58 2024 GMT] $: [1] Ron moves from [6] Kitchen to [4] Dining Room.
+[OOC][Fri Feb 23 12:29:00 2024 GMT] $: [1] Ron moves from [4] Dining Room to [5] Lounge.
+[OOC][Fri Feb 23 12:29:02 2024 GMT] $: [1] Ron moves from [5] Lounge to [1] Main.
+[OOC][Fri Feb 23 12:29:07 2024 GMT] $: [1] Ron moves from [1] Main to [2] Smoking.
+[OOC][Fri Feb 23 12:29:10 2024 GMT] $: [1] Ron moves from [2] Smoking to [3] Bathroom.
+[OOC][Fri Feb 23 12:29:13 2024 GMT] $: [1] Ron moves from [3] Bathroom to [2] Smoking.
+[OOC][Fri Feb 23 12:29:15 2024 GMT] $: [1] Ron moves from [2] Smoking to [1] Main.
+[OOC][Fri Feb 23 12:29:23 2024 GMT] $: [1] Ron moves from [1] Main to [5] Lounge.
+[OOC][Fri Feb 23 12:29:26 2024 GMT] $: [1] Ron moves from [5] Lounge to [4] Dining Room.
+[OOC][Fri Feb 23 12:29:27 2024 GMT] $: [1] Ron moves from [4] Dining Room to [6] Kitchen.
+[OOC][Fri Feb 23 12:29:29 2024 GMT] $: [1] Ron moves from [6] Kitchen to [7] Freezer.
+[OOC][Fri Feb 23 12:42:54 2024 GMT] $: Saving all Hubs to areas_new.yaml. Contact the server owner to apply the changes.
+[OOC][Fri Feb 23 12:43:16 2024 GMT] $: Saving as storage/hubs/aologtest.yaml...
+[OOC][Fri Feb 23 12:43:53 2024 GMT] $: Hub clearing initiated...
+[OOC][Fri Feb 23 12:43:53 2024 GMT] $: Success, loading as storage/hubs/fuck.yaml...
+[OOC][Fri Feb 23 12:43:53 2024 GMT] $: Success, sending ARUP and refreshing music...
+[OOC][Fri Feb 23 12:44:01 2024 GMT] $: 🚶Changed to area: [7] Restroom (users: 1) 
+Clients in area:
+  ◽ 📦[M][0] Polly <wit> (20847): Fantos
+[OOC][Fri Feb 23 12:44:04 2024 GMT] $: 🚶Changed to area: [5] Hallway to Restroom (users: 1) 
+Clients in area:
+  ◽ 📦[M][0] Polly <wit> (20847): Fantos
+[OOC][Fri Feb 23 12:44:27 2024 GMT] $: 🚶Changed to area: [0] Lobby (users: 2) 
+📃Description: The main dropzone for the RP.
+Clients in area:
+  ◾ [1] Ron (20847)
+  ◽ 📦[M][0] Polly <wit> (20847): Fantos
+[OOC][Fri Feb 23 12:44:27 2024 GMT] $: Hub clearing initiated...

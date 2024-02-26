@@ -105,6 +105,8 @@ func parse_line(line):
 	var speaker = line.substr(0, line.find(":")).strip_edges()
 
 	var italics = false
+	var avatar = null
+	var charfolder = ""
 	if is_ooc:
 		if not hostname and (message.begins_with("===") or message.begins_with("Changed to")) and speaker != "[Global log]":
 			hostname = speaker
@@ -117,17 +119,17 @@ func parse_line(line):
 				break
 
 		var showname = speaker.substr(0, speaker.find("(")).strip_edges()
-		var charfolder = showname
+		charfolder = showname
 		if showname != speaker:
 			charfolder = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
 
 		if charfolder in shownames:
 			charfolder = shownames[charfolder]
 		if charfolder:
-			var texture = get_speakerIcon(charfolder)
-			if texture is ImageTexture:
+			avatar = get_speakerIcon(charfolder)
+			if avatar is ImageTexture:
 					# Add image to the bbcode tag stack
-				parsed_view.add_image(texture, 24, 24)
+				parsed_view.add_image(avatar, 24, 24)
 			else:
 				push_warning("Couldn't find char_icon for %s (%s)" % [asset_folder_path + "/characters/" + charfolder + "/char_icon.png", message])
 	if italics:
@@ -156,11 +158,12 @@ func parse_line(line):
 		if currentCharacter == null:
 			#CREATE NEW CHARACTER
 			currentCharacter = create_character(characters.size())
+		if charfolder != "":
+			currentCharacter.charfolder = charfolder
 		for currentName in nameArray:
 			if currentName != "":
 				currentCharacter.add_name(currentName)
 				if initial_logread == false:
-					var avatar = _find_avatar(currentCharacter)
 					if currentCharacter.avatar == null and avatar != null:
 						currentCharacter.set_avatar(avatar)
 		if speaker == hostname and line.find("moves from") != -1:
@@ -205,20 +208,15 @@ func create_character(id):
 	return newChar
 
 func _find_avatar(char):
-	var avatar = char.avatar
-	for currentName in char.names:
-		var texture = null
-		if currentName in shownames:
-			texture = get_speakerIcon(shownames[currentName])
-		else:
-			texture = get_speakerIcon(currentName)
-		if texture is ImageTexture:
-			avatar = texture
-	return avatar
+	if char.charfolder:
+		return get_speakerIcon(char.charfolder)
+	return char.avatar
 
 func _find_avatars():
 	for character in characters:
-		character.set_avatar(_find_avatar(character))
+		var avatar = _find_avatar(character)
+		if avatar != null:
+			character.set_avatar(avatar)
 
 func _clean_name(speaker):
 	var speakerArray = []
