@@ -151,6 +151,10 @@ layout_mode = 2
 layout_mode = 2
 text = "Refresh"
 
+[node name="MapImage" type="Button" parent="HBoxContainer/Bottom/Buttons"]
+layout_mode = 2
+text = "Map Image"
+
 [node name="ToggleParsedView" type="Button" parent="HBoxContainer/Bottom/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -190,6 +194,16 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.log;Log File")
+
+[node name="MapFileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Open a Map Image"
+initial_position = 1
+size = Vector2i(600, 500)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.tga, *.bmp, *.webp, *.svg;Map Image")
 
 [node name="FolderDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
@@ -268,11 +282,13 @@ layout_mode = 2
 [connection signal="toggled" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/>" to="." method="_on_play_toggled"]
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer2/HBoxContainer2/>>" to="." method="_on_next_movement_pressed"]
 [connection signal="pressed" from="HBoxContainer/Bottom/Buttons/RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Bottom/Buttons/MapImage" to="." method="_on_map_image_pressed"]
 [connection signal="toggled" from="HBoxContainer/Bottom/Buttons/ToggleParsedView" to="." method="_on_toggle_parsed_view_toggled"]
 [connection signal="toggled" from="HBoxContainer/Bottom/Buttons/ToggleLogView" to="." method="_on_toggle_log_view_toggled"]
 [connection signal="toggled" from="HBoxContainer/Bottom/Buttons/CharactersButton" to="." method="_on_button_toggled"]
 [connection signal="value_changed" from="HBoxContainer/Bottom/HBoxContainer2/HScrollBar" to="." method="_on_timeline_value_changed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="file_selected" from="MapFileDialog" to="." method="_on_map_file_dialog_file_selected"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
 [connection signal="close_requested" from="ParsedViewWindow" to="." method="_on_parsed_view_window_close_requested"]
 [connection signal="close_requested" from="LogViewWindow" to="." method="_on_log_view_window_close_requested"]

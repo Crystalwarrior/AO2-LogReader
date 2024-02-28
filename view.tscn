@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbk86f7aw7aae"]
+[gd_scene load_steps=6 format=3 uid="uid://cbk86f7aw7aae"]
 
 [ext_resource type="Texture2D" uid="uid://c10dfsnyvpt2s" path="res://map.png" id="1_25yal"]
 [ext_resource type="PackedScene" uid="uid://cpp1f87megsvi" path="res://main_window.tscn" id="1_h1np8"]
 [ext_resource type="Script" path="res://Areas.gd" id="3_5a0sm"]
+[ext_resource type="Script" path="res://Map.gd" id="3_sit67"]
 [ext_resource type="Script" path="res://MapViewCamera.gd" id="3_xct7p"]
 
 [node name="View" type="Node2D"]
@@ -15,6 +16,7 @@
 position = Vector2(574.333, 323.5)
 scale = Vector2(0.597222, 0.597222)
 texture = ExtResource("1_25yal")
+script = ExtResource("3_sit67")
 
 [node name="Areas" type="Control" parent="."]
 layout_mode = 3
@@ -28,3 +30,4 @@ script = ExtResource("3_xct7p")
 
 [connection signal="movement" from="CanvasLayer/MainWindow" to="Areas" method="_on_main_window_movement"]
 [connection signal="placeChar" from="CanvasLayer/MainWindow" to="Areas" method="_on_main_window_place_char"]
+[connection signal="swapMap" from="CanvasLayer/MainWindow" to="Map" method="_on_main_window_swap_map"]
