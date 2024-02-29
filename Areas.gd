@@ -19,7 +19,9 @@ func _is_exist(_name, ID):
 			return true
 	return false
 
-func _create_area(_name, ID):
+func create_area(_name, ID):
+	if _is_exist(_name, ID):
+		return
 	if int(ID) == -1:
 		return
 	var newArea = area.instantiate()
@@ -38,10 +40,10 @@ func movement(char, live, toID, to = null, fromID = null, from = null):
 #	print("Move " + char.charName + " to " + to)
 	if from != null:
 		if !_is_exist(from, fromID):
-			_create_area(from, fromID)
+			create_area(from, fromID)
 	if to != null:
 		if !_is_exist(to, toID):
-			_create_area(to, toID)
+			create_area(to, toID)
 #	char.reparent(self.get_node(toID).get_node("%CharacterContainer"))
 #	for area in self.get_children():
 #		for character in area.get_node("%CharacterContainer").get_children():
@@ -76,7 +78,7 @@ func _on_map_view_camera_zoom_change(value):
 func place_character(char, icon, color, toID, to = null):
 	if to != null:
 		if !_is_exist(to, toID):
-			_create_area(to, toID)
+			create_area(to, toID)
 
 	for area in self.get_children():
 		if area.name == toID:

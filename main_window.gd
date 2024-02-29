@@ -40,6 +40,7 @@ var initial_logread = false
 var shownames: Dictionary = {}
 var foldernames: Dictionary = {}
 var characters = []
+var idCounter = 0
 var notSure: Array = []
 var movements = []
 var startTime
@@ -47,6 +48,8 @@ var endTime = 0
 var timer = 0
 var playing
 var playing_backward
+var areasRead
+var areasBegin = ["[1", "[2", "[3", "[4", "[5", "[6", "[7", "[8", "[9", "[0", "[CM]", "[GM]", "[M]", "=== "]
 
 func _process(delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
@@ -80,8 +83,6 @@ func generate_shownames():
 				var ini_path = dir.get_current_dir() + "/" + file_name + "/char.ini"
 				if FileAccess.file_exists(ini_path):
 					var config = FileAccess.open(ini_path, FileAccess.READ)
-					if file_name == "DRRA_Narrator":
-						print("NARRATOR")
 					foldernames[file_name] = file_name
 					print("Found .ini file in folder: " + file_name)
 					var in_options = false
@@ -97,10 +98,46 @@ func generate_shownames():
 									foldernames[file_name] = showname
 									print("Showname '" + showname + "' now associated with charfolder " + file_name)
 			file_name = dir.get_next()
-	print(foldernames)
 	_find_avatars()
 
 func parse_line(line):
+	areasRead = false
+
+	for beginning in areasBegin:
+		if line.begins_with(beginning):
+			areasRead = true
+			break
+
+	if areasRead:
+		if line.begins_with("=== "):
+			var areaID = line.split("]")[0].split("[")[1].strip_edges()
+			var areaName = line.split("]")[1].split("(")[0].strip_edges()
+			$"../../Areas".create_area(areaName, areaID)
+		else:
+			var charID
+			var showName
+			var folderName
+			if line.begins_with("[GM") or line.begins_with("[M") or line.begins_with("[CM"):
+				charID = line.split("]")[1].split("[")[1]
+				showName = line.split("]")[2].split("<")[0].split(":")[0].strip_edges()
+				folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
+			else:
+				charID = line.split("]")[0].split("[")[1]
+				showName = line.split("]")[1].split("<")[0].split(":")[0].split("(")[0].strip_edges().lstrip("\"").rstrip("\"")
+				folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
+			var areaNameArray = [showName]
+			if showName != folderName:
+				areaNameArray.append(folderName)
+			var areaChar = _find_character(areaNameArray, charID)
+			if areaChar== null:
+				var newChar = create_character(charID)
+				for currentName in areaNameArray:
+					newChar.add_name(currentName)
+				newChar.charfolder = folderName
+			else:
+				areaChar.charfolder = folderName
+
+
 	if not line.begins_with("[") or not line.contains("GMT]"):
 		parsed_view.add_text(line + "\n")
 		return
@@ -116,9 +153,20 @@ func parse_line(line):
 	var italics = false
 	var avatar = null
 	var charfolder = ""
+	var currentCharacter
+
+	
 	if is_ooc:
 		if not hostname and (message.begins_with("===") or message.begins_with("Changed to")) and speaker != "[Global log]":
 			hostname = speaker
+		if speaker == hostname and message.contains("disconnected"):
+			var aoid = message.split("]")[0].lstrip("[")
+			currentCharacter = _find_character_by_aoid(aoid)
+			if currentCharacter == null:
+				currentCharacter = create_character(aoid)
+				currentCharacter.add_name(message.split("]")[1].split(" has")[0].strip_edges())
+			if currentCharacter != null:
+				currentCharacter.set_disconnect_state(true)
 	else:
 		var actions = ["shouts", "has "]
 		for action in actions:
@@ -157,16 +205,22 @@ func parse_line(line):
 		parsed_view.pop()
 	if !is_ooc or line.contains("moves from"):
 		var nameArray
+		var aoid = null
 		if speaker == hostname and line.contains("moves from"):
 			nameArray = [line.split("]")[1].lstrip(" ").split("moves from")[0].strip_edges()]
+			aoid = line.split("]")[0].split("[")[1]
 		else:
 			nameArray = _clean_name(speaker)
 		if nameArray.is_empty():
 			return
-		var currentCharacter = _find_character(nameArray)
+		currentCharacter = _find_character(nameArray, aoid)
 		if currentCharacter == null:
 			#CREATE NEW CHARACTER
-			currentCharacter = create_character(characters.size())
+			currentCharacter = create_character(aoid)
+		else:
+			if currentCharacter.disconnected == true or aoid != null:
+				currentCharacter.aoid = aoid
+				currentCharacter.set_disconnect_state(false)
 		if charfolder != "" and foldernames.is_empty() == false:
 			currentCharacter.charfolder = charfolder
 		for currentName in nameArray:
@@ -201,17 +255,20 @@ func _convert_time(timeStamp):
 	var time = Time.get_unix_time_from_datetime_string(timeString)
 	return time
 
-func create_character(id):
+func create_character(aoid = null):
 # PUT CHARACTER INTO THE LIST
 	var newChar = characterNode.instantiate()
-	if id < colors.size()-1:
-		newChar.set_color(Color(colors[id]))
+	newChar.id = idCounter
+	idCounter += 1
+	if newChar.id < colors.size()-1:
+		newChar.set_color(Color(colors[newChar.id]))
 	else:
-		var newColor = colors[id-(colors.size()-1)]
+		var newColor = colors[newChar.id-(colors.size()-1)]
 		newColor[2] = "F"
 		newColor[4] = "F"
 		newChar.set_color(Color(newColor))
-	newChar.id = id
+	if aoid:
+		newChar.aoid = aoid
 	%CharacterList.add_child(newChar)
 	characters.append(newChar)
 
@@ -222,9 +279,6 @@ func _find_avatar(char):
 		return get_speakerIcon(char.charfolder)
 	return char.avatar
 
-		#if character.names.has("Kazuichi"):
-			#print(character.names)
-			#print(character.charfolder)
 func _find_avatars():
 	for character in characters:
 		character.charfolder = _find_foldername(character)
@@ -261,6 +315,23 @@ func _find_foldername(char):
 	else:
 		return resultArray[0]
 
+func _find_character(nameArray, aoid = null):
+	for character in characters:
+		for alias in character.names:
+			if alias in nameArray:
+				if character.aoid != null and aoid != null:
+					if character.aoid == aoid or character.disconnected == true:
+						return character
+				else:
+					return character
+	return null
+
+func _find_character_by_aoid(aoid):
+	for character in characters:
+		if character.aoid == aoid:
+			return character
+	return null
+
 func _clean_name(speaker):
 	var speakerArray = []
 	if speaker.split("(").size() > 1:
@@ -271,13 +342,6 @@ func _clean_name(speaker):
 	elif speaker != "":
 		speakerArray.append(speaker.strip_edges())
 	return speakerArray
-
-func _find_character(nameArray):
-	for character in characters:
-		for alias in character.names:
-			if alias in nameArray:
-				return character
-	return null
 
 func get_speakerIcon(charfolder: String):
 	if charfolder.is_empty():
@@ -462,3 +526,9 @@ func _on_map_file_dialog_file_selected(path):
 
 func _on_map_image_pressed():
 	map_file_dialog.show()
+
+
+func _on_hide_invis_toggled(toggled):
+	for character in %CharacterList.get_children():
+		if character.get_node("Visibility").button_pressed == true:
+			character.visible = !toggled

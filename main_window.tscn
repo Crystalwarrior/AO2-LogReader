@@ -262,16 +262,37 @@ syntax_highlighter = SubResource("CodeHighlighter_cppi3")
 
 [node name="Characters" type="PanelContainer" parent="."]
 unique_name_in_owner = true
-visible = false
+clip_contents = true
 layout_mode = 1
 anchors_preset = -1
+anchor_top = 0.162
 anchor_bottom = 1.0
-offset_top = 105.0
+offset_top = 0.0240021
 offset_right = 355.0
 grow_vertical = 2
 
-[node name="CharacterList" type="HFlowContainer" parent="Characters"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Characters"]
+clip_contents = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Characters/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Padding" type="Control" parent="Characters/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Hide invis" type="CheckBox" parent="Characters/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Hide invisible on list"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Characters/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CharacterList" type="HFlowContainer" parent="Characters/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
+clip_contents = true
 layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/Top/HBoxContainer/Logfile/OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
@@ -292,3 +313,4 @@ layout_mode = 2
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
 [connection signal="close_requested" from="ParsedViewWindow" to="." method="_on_parsed_view_window_close_requested"]
 [connection signal="close_requested" from="LogViewWindow" to="." method="_on_log_view_window_close_requested"]
+[connection signal="toggled" from="Characters/VBoxContainer/HBoxContainer/Hide invis" to="." method="_on_hide_invis_toggled"]
