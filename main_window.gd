@@ -38,7 +38,9 @@ var hostname: String
 
 var initial_logread = false
 var shownames: Dictionary = {}
+var foldernames: Dictionary = {}
 var characters = []
+var notSure: Array = []
 var movements = []
 var startTime
 var endTime = 0
@@ -68,7 +70,7 @@ func _process(delta):
 
 
 func generate_shownames():
-	shownames.clear()
+	foldernames.clear()
 	var dir = DirAccess.open(asset_folder_path + "/characters")
 	if dir:
 		dir.list_dir_begin()
@@ -78,6 +80,9 @@ func generate_shownames():
 				var ini_path = dir.get_current_dir() + "/" + file_name + "/char.ini"
 				if FileAccess.file_exists(ini_path):
 					var config = FileAccess.open(ini_path, FileAccess.READ)
+					if file_name == "DRRA_Narrator":
+						print("NARRATOR")
+					foldernames[file_name] = file_name
 					print("Found .ini file in folder: " + file_name)
 					var in_options = false
 					while not config.eof_reached():
@@ -89,9 +94,10 @@ func generate_shownames():
 							if split.size() > 1 and split[0].strip_edges() == "showname":
 								var showname = split[1].strip_edges()
 								if showname and showname != file_name:
-									shownames[showname] = file_name
+									foldernames[file_name] = showname
 									print("Showname '" + showname + "' now associated with charfolder " + file_name)
 			file_name = dir.get_next()
+	print(foldernames)
 	_find_avatars()
 
 func parse_line(line):
@@ -126,8 +132,8 @@ func parse_line(line):
 		if showname != speaker:
 			charfolder = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
 
-		if charfolder in shownames:
-			charfolder = shownames[charfolder]
+		if charfolder in foldernames:
+			charfolder = foldernames[charfolder]
 		if charfolder:
 			avatar = get_speakerIcon(charfolder)
 			if avatar is ImageTexture:
@@ -161,15 +167,15 @@ func parse_line(line):
 		if currentCharacter == null:
 			#CREATE NEW CHARACTER
 			currentCharacter = create_character(characters.size())
-		if charfolder != "":
+		if charfolder != "" and foldernames.is_empty() == false:
 			currentCharacter.charfolder = charfolder
-			currentCharacter.add_name(charfolder)
 		for currentName in nameArray:
 			if currentName != "":
 				currentCharacter.add_name(currentName)
-				if initial_logread == false:
-					if currentCharacter.avatar == null and avatar != null:
-						currentCharacter.set_avatar(avatar)
+				if charfolder != "" and !currentCharacter.names.has(charfolder):
+					currentCharacter.add_name(charfolder)
+
+		_find_avatar(currentCharacter)
 		if speaker == hostname and line.find("moves from") != -1:
 			var from = line.split("] ")[2].split(" to")[0]
 			var fromID = line.split("] ")[1].split("[")[1]
@@ -216,11 +222,44 @@ func _find_avatar(char):
 		return get_speakerIcon(char.charfolder)
 	return char.avatar
 
+		#if character.names.has("Kazuichi"):
+			#print(character.names)
+			#print(character.charfolder)
 func _find_avatars():
 	for character in characters:
-		var avatar = _find_avatar(character)
-		if avatar != null:
-			character.set_avatar(avatar)
+		character.charfolder = _find_foldername(character)
+		if character.charfolder is Array:
+			notSure.append(character)
+		else:
+			_check_notSure_list(character.charfolder)
+			var avatar = _find_avatar(character)
+			if avatar != null:
+				character.set_avatar(avatar)
+
+func _check_notSure_list(foldername):
+	for character in notSure:
+		character.charfolder.erase(foldername)
+		if character.charfolder.size() == 1:
+			var theFolder = character.charfolder[0]
+			character.charfolder = theFolder
+			var avatar = _find_avatar(character)
+			if avatar != null:
+				character.set_avatar(avatar)
+			notSure.erase(character)
+
+func _find_foldername(char):
+	var resultArray = []
+	for name in char.names:
+		for foldername in foldernames.keys():
+			if name == foldernames[foldername] or name == foldername:
+				if !resultArray.has(foldername):
+					resultArray.append(foldername)
+	if resultArray.is_empty():
+		return null
+	if resultArray.size() > 1:
+		return resultArray
+	else:
+		return resultArray[0]
 
 func _clean_name(speaker):
 	var speakerArray = []
@@ -252,14 +291,12 @@ func get_speakerIcon(charfolder: String):
 		return null
 
 func parse_logfile():
-	initial_logread = true
 	parsed_view.clear()
 	hostname = ""
 	var lines = logview.text.split("\n")
 	for line in lines:
 		parse_line(line)
-	initial_logread = false
-	if !shownames.is_empty():
+	if !foldernames.is_empty():
 		_find_avatars()
 
 func _update_timeline(live):
