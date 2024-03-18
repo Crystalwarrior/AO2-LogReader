@@ -262,6 +262,7 @@ syntax_highlighter = SubResource("CodeHighlighter_cppi3")
 
 [node name="Characters" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+visible = false
 clip_contents = true
 layout_mode = 1
 anchors_preset = -1

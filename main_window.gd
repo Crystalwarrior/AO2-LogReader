@@ -49,7 +49,7 @@ var timer = 0
 var playing
 var playing_backward
 var areasRead
-var areasBegin = ["[1", "[2", "[3", "[4", "[5", "[6", "[7", "[8", "[9", "[0", "[CM]", "[GM]", "[M]", "=== "]
+var areasBegin = ["[1", "[2", "[3", "[4", "[5", "[6", "[7", "[8", "[9", "[0", "[CM]", "[GM]", "[M]", "=== ", "  ◽", "  ◾"]
 
 func _process(delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
@@ -113,7 +113,7 @@ func parse_line(line):
 			var areaID = line.split("]")[0].split("[")[1].strip_edges()
 			var areaName = line.split("]")[1].split("(")[0].strip_edges()
 			$"../../Areas".create_area(areaName, areaID)
-		else:
+		elif line.contains("users:") == false:
 			var charID
 			var showName
 			var folderName
@@ -149,6 +149,9 @@ func parse_line(line):
 	line = line.substr(timestamp.length()+1)
 	var message = line.substr(line.find(":")+1).strip_edges()
 	var speaker = line.substr(0, line.find(":")).strip_edges()
+	var talkAreaID = null
+	if message.contains("}}}["):
+		talkAreaID = message.split("}}}[")[1].split("]")[0]
 
 	var italics = false
 	var avatar = null
@@ -203,33 +206,55 @@ func parse_line(line):
 	parsed_view.add_text(message + "\n")
 	if italics:
 		parsed_view.pop()
-	if !is_ooc or line.contains("moves from"):
-		var nameArray
+
+	if !is_ooc or line.contains("moves from") or line.contains("Attempting to kick"):
 		var aoid = null
+		var nameArray
 		if speaker == hostname and line.contains("moves from"):
-			nameArray = [line.split("]")[1].lstrip(" ").split("moves from")[0].strip_edges()]
 			aoid = line.split("]")[0].split("[")[1]
+			nameArray = [line.split("]")[1].lstrip(" ").split("moves from")[0].strip_edges()]
 		else:
 			nameArray = _clean_name(speaker)
+		
 		if nameArray.is_empty():
 			return
 		currentCharacter = _find_character(nameArray, aoid)
-		if currentCharacter == null:
+		if !currentCharacter:
 			#CREATE NEW CHARACTER
 			currentCharacter = create_character(aoid)
-		else:
+			_find_avatar(currentCharacter)
+		if currentCharacter:
 			if currentCharacter.disconnected == true or aoid != null:
 				currentCharacter.aoid = aoid
 				currentCharacter.set_disconnect_state(false)
-		if charfolder != "" and foldernames.is_empty() == false:
-			currentCharacter.charfolder = charfolder
-		for currentName in nameArray:
-			if currentName != "":
-				currentCharacter.add_name(currentName)
-				if charfolder != "" and !currentCharacter.names.has(charfolder):
-					currentCharacter.add_name(charfolder)
+			if talkAreaID != null and currentCharacter.currentLocationID != talkAreaID:
+				movements.append([currentCharacter.id, currentCharacter.currentLocationID, talkAreaID, _convert_time(timestamp)])
+				currentCharacter.currentLocationID = talkAreaID
+				var live = timeline.value == timeline.max_value
+				areas.movement(currentCharacter, live, talkAreaID)
+			if charfolder != "" and foldernames.is_empty() == false:
+				currentCharacter.charfolder = charfolder
+			for currentName in nameArray:
+				if currentName != "":
+					currentCharacter.add_name(currentName)
+					if charfolder != "" and !currentCharacter.names.has(charfolder):
+						currentCharacter.add_name(charfolder)
+					
+		if speaker == hostname and line.contains("Attempting to kick"):
+			aoid = message.split("[")[1].split("]")[0]
+			nameArray = [message.split("]")[1].split("from")[0].strip_edges()]
+			currentCharacter = _find_character(nameArray, aoid)
+			if currentCharacter:
+				for currentName in nameArray:
+					currentCharacter.add_name(currentName)
+				var fromID = message.split("[")[2].split("]")[0]
+				var from = message.split("]")[2].split("to")[0].strip_edges()
+				var toID = message.split("[")[3].split("]")[0]
+				var to = message.split("]")[3].split(".")[0].strip_edges()
+				var live = timeline.value == timeline.max_value
+				areas.movement(currentCharacter, live, toID, to, fromID, from)
+				#func movement(char, live, toID, to = null, fromID = null, from = null):
 
-		_find_avatar(currentCharacter)
 		if speaker == hostname and line.find("moves from") != -1:
 			var from = line.split("] ")[2].split(" to")[0]
 			var fromID = line.split("] ")[1].split("[")[1]
@@ -334,6 +359,8 @@ func _find_character_by_aoid(aoid):
 
 func _clean_name(speaker):
 	var speakerArray = []
+	if speaker == "$":
+		return []
 	if speaker.split("(").size() > 1:
 		var splitArray = speaker.split("(")
 		speaker = splitArray[0].strip_edges() + "(" + splitArray[splitArray.size()-1].strip_edges()

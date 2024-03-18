@@ -11,7 +11,7 @@ var prevPos
 
 var waitList = {}
 
-func _is_exist(_name, ID):
+func _is_exist(ID, _name):
 	for child in self.get_children():
 		if child.name == str(ID):
 			if child.get_node("%Name").text == "" and _name != null:
@@ -19,8 +19,8 @@ func _is_exist(_name, ID):
 			return true
 	return false
 
-func create_area(_name, ID):
-	if _is_exist(_name, ID):
+func create_area(ID, _name):
+	if _is_exist(ID, _name):
 		return
 	if int(ID) == -1:
 		return
@@ -28,6 +28,8 @@ func create_area(_name, ID):
 	newArea.name = str(ID)
 	if _name != null:
 		newArea.get_node("%Name").text = _name
+	else:
+		newArea.get_node("%Name").text = ID
 	if prevArea:
 		if prevArea.position == prevPos:
 			newArea.position += prevArea.position + Vector2(prevArea.size.x + 10, 0)
@@ -37,23 +39,16 @@ func create_area(_name, ID):
 
 
 func movement(char, live, toID, to = null, fromID = null, from = null):
-#	print("Move " + char.charName + " to " + to)
-	if from != null:
-		if !_is_exist(from, fromID):
-			create_area(from, fromID)
-	if to != null:
-		if !_is_exist(to, toID):
-			create_area(to, toID)
-#	char.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-#	for area in self.get_children():
-#		for character in area.get_node("%CharacterContainer").get_children():
-#			print(character.name)
-#			if char.charName != null and character.name == char.charName:
-#				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-#				return
-#			if char.showName != null and character.name == char.showName:
-#				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-#				return
+	if fromID != null:
+		if !_is_exist(fromID, from):
+			create_area(fromID, from)
+	if toID != null:
+		if !_is_exist(toID, to):
+			create_area(toID, to)
+		if to != null and self.get_node(toID).get_node("%Name").text != to:
+			self.get_node(toID).get_node("%Name").text = to
+		if from != null and self.get_node(fromID).get_node("%Name").text != from:
+			self.get_node(fromID).get_node("%Name").text = from
 	if live:
 		if char.mapChar != null:
 			char.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
@@ -61,12 +56,6 @@ func movement(char, live, toID, to = null, fromID = null, from = null):
 			return
 		else:
 			place_character(char, char.get_node("Icon").texture, char.color, toID, to)
-
-	#var charName
-	#if char.charName != null:
-		#charName = char.charName
-	#else:
-		#charName = char.showName
 
 
 
@@ -77,8 +66,8 @@ func _on_map_view_camera_zoom_change(value):
 
 func place_character(char, icon, color, toID, to = null):
 	if to != null:
-		if !_is_exist(to, toID):
-			create_area(to, toID)
+		if !_is_exist(toID, to):
+			create_area(toID, to)
 
 	for area in self.get_children():
 		if area.name == toID:
