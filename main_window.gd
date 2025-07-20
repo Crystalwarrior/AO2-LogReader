@@ -42,6 +42,8 @@ var endTime = 0
 var timer = 0
 var playing
 var playing_backward
+var areasRead
+var areasBegin = ["[1", "[2", "[3", "[4", "[5", "[6", "[7", "[8", "[9", "[0", "[CM]", "[GM]", "[M]", "=== ", "  ◽", "  ◾"]
 
 var last_linecount
 
@@ -102,7 +104,44 @@ func generate_shownames():
 			file_name = dir.get_next()
 	_find_avatars()
 
-func parse_line(line, line_number):
+func parse_line(line):
+	areasRead = false
+
+	for beginning in areasBegin:
+		if line.begins_with(beginning):
+			areasRead = true
+			break
+
+	if areasRead:
+		if line.begins_with("=== "):
+			var areaID = line.split("]")[0].split("[")[1].strip_edges()
+			var areaName = line.split("]")[1].split("(")[0].strip_edges()
+			$"../../Areas".create_area(areaName, areaID)
+		elif line.contains("users:") == false:
+			var charID
+			var showName
+			var folderName
+			if line.begins_with("[GM") or line.begins_with("[M") or line.begins_with("[CM"):
+				charID = line.split("]")[1].split("[")[1]
+				showName = line.split("]")[2].split("<")[0].split(":")[0].strip_edges()
+				folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
+			else:
+				charID = line.split("]")[0].split("[")[1]
+				showName = line.split("]")[1].split("<")[0].split(":")[0].split("(")[0].strip_edges().lstrip("\"").rstrip("\"")
+				folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
+			var areaNameArray = [showName]
+			if showName != folderName:
+				areaNameArray.append(folderName)
+			var areaChar = _find_character(areaNameArray, charID)
+			if areaChar== null:
+				var newChar = create_character(charID)
+				for currentName in areaNameArray:
+					newChar.add_name(currentName)
+				newChar.charfolder = folderName
+			else:
+				areaChar.charfolder = folderName
+
+
 	if not line.begins_with("[") or not line.contains("GMT]"):
 		parsed_view.add_text(line + "\n")
 		return
@@ -114,6 +153,9 @@ func parse_line(line, line_number):
 	line = line.substr(timestamp.length()+1)
 	var message = line.substr(line.find(":")+1).strip_edges()
 	var speaker = line.substr(0, line.find(":")).strip_edges()
+	var talkAreaID = null
+	if message.contains("}}}["):
+		talkAreaID = message.split("}}}[")[1].split("]")[0]
 
 	var italics = false
 	var avatar = null
@@ -156,7 +198,9 @@ func parse_line(line, line_number):
 	parsed_view.add_text(message.replace("{", "").replace("}", "") + "\n")
 	if italics:
 		parsed_view.pop()
-	if !is_ooc or line.contains("moves from"):
+
+	if !is_ooc or line.contains("moves from") or line.contains("Attempting to kick"):
+		var aoid = null
 		var nameArray
 		if speaker == hostname and line.contains("moves from"):
 			nameArray = [line.split("]")[1].lstrip(" ").split("moves from")[0].strip_edges()]
@@ -177,6 +221,21 @@ func parse_line(line, line_number):
 				if initial_logread == false:
 					if currentCharacter.avatar == null and avatar != null:
 						currentCharacter.set_avatar(avatar)
+		if speaker == hostname and line.contains("Attempting to kick"):
+			aoid = message.split("[")[1].split("]")[0]
+			nameArray = [message.split("]")[1].split("from")[0].strip_edges()]
+			currentCharacter = _find_character(nameArray, aoid)
+			if currentCharacter:
+				for currentName in nameArray:
+					currentCharacter.add_name(currentName)
+				var fromID = message.split("[")[2].split("]")[0]
+				var from = message.split("]")[2].split("to")[0].strip_edges()
+				var toID = message.split("[")[3].split("]")[0]
+				var to = message.split("]")[3].split(".")[0].strip_edges()
+				var live = timeline.value == timeline.max_value
+				areas.movement(currentCharacter, live, toID, to, fromID, from)
+				#func movement(char, live, toID, to = null, fromID = null, from = null):
+
 		if speaker == hostname and line.find("moves from") != -1:
 			var from = line.split("] ")[2].split(" to")[0]
 			var fromID = line.split("] ")[1].split("[")[1]
@@ -188,10 +247,10 @@ func parse_line(line, line_number):
 			if time > endTime:
 				endTime = time
 			if currentCharacter.currentLocationID == null:
-				movements.append([currentCharacter.id, fromID, fromID, startTime, line, line_number])
-			movements.append([currentCharacter.id, fromID, toID, time, line, line_number])
+				movements.append([currentCharacter.id, fromID, fromID, startTime, line])
+			movements.append([currentCharacter.id, fromID, toID, time, line])
 			var live = timeline.value == timeline.max_value
-			areas.movement(currentCharacter, live, toID, to, fromID, from, line_number)
+			areas.movement(currentCharacter, live, toID, to, fromID, from)
 			_update_timeline(live)
 
 func _convert_time(timeStamp):
@@ -231,6 +290,8 @@ func _find_avatars():
 
 func _clean_name(speaker):
 	var speakerArray = []
+	if speaker == "$":
+		return []
 	if speaker.split("(").size() > 1:
 		var splitArray = speaker.split("(")
 		speaker = splitArray[0].strip_edges() + "(" + splitArray[splitArray.size()-1].strip_edges()
@@ -268,7 +329,7 @@ func parse_logfile(to_line = -1):
 	last_linecount = to_line
 	for i in min(lines.size(), to_line+1):
 		var line = lines[i]
-		parse_line(line, i)
+		parse_line(line)
 	initial_logread = false
 	if !shownames.is_empty():
 		_find_avatars()
