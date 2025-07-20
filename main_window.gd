@@ -117,29 +117,29 @@ func parse_line(line):
 			var areaID = line.split("]")[0].split("[")[1].strip_edges()
 			var areaName = line.split("]")[1].split("(")[0].strip_edges()
 			$"../../Areas".create_area(areaName, areaID)
-		elif line.contains("users:") == false:
-			var charID
-			var showName
-			var folderName
-			if line.begins_with("[GM") or line.begins_with("[M") or line.begins_with("[CM"):
-				charID = line.split("]")[1].split("[")[1]
-				showName = line.split("]")[2].split("<")[0].split(":")[0].strip_edges()
-				folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
-			else:
-				charID = line.split("]")[0].split("[")[1]
-				showName = line.split("]")[1].split("<")[0].split(":")[0].split("(")[0].strip_edges().lstrip("\"").rstrip("\"")
-				folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
-			var areaNameArray = [showName]
-			if showName != folderName:
-				areaNameArray.append(folderName)
-			var areaChar = _find_character(areaNameArray, charID)
-			if areaChar== null:
-				var newChar = create_character(charID)
-				for currentName in areaNameArray:
-					newChar.add_name(currentName)
-				newChar.charfolder = folderName
-			else:
-				areaChar.charfolder = folderName
+		# elif line.contains("users:") == false:
+		# 	var charID
+		# 	var showName
+		# 	var folderName
+		# 	if line.begins_with("[GM") or line.begins_with("[M") or line.begins_with("[CM"):
+		# 		charID = line.split("]")[1].split("[")[1]
+		# 		showName = line.split("]")[2].split("<")[0].split(":")[0].strip_edges()
+		# 		folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
+		# 	else:
+		# 		charID = line.split("]")[0].split("[")[1]
+		# 		showName = line.split("]")[1].split("<")[0].split(":")[0].split("(")[0].strip_edges().lstrip("\"").rstrip("\"")
+		# 		folderName = line.split(":")[0].split("<")[0].split("(")[-1].split(")")[0].split("]")[-1].strip_edges()
+		# 	var areaNameArray = [showName]
+		# 	if showName != folderName:
+		# 		areaNameArray.append(folderName)
+		# 	var areaChar = _find_character(areaNameArray)
+		# 	if areaChar== null:
+		# 		var newChar = create_character(charID)
+		# 		for currentName in areaNameArray:
+		# 			newChar.add_name(currentName)
+		# 		newChar.charfolder = folderName
+		# 	else:
+		# 		areaChar.charfolder = folderName
 
 
 	if not line.begins_with("[") or not line.contains("GMT]"):
@@ -200,7 +200,7 @@ func parse_line(line):
 		parsed_view.pop()
 
 	if !is_ooc or line.contains("moves from") or line.contains("Attempting to kick"):
-		var aoid = null
+		#var aoid = null
 		var nameArray
 		if speaker == hostname and line.contains("moves from"):
 			nameArray = [line.split("]")[1].lstrip(" ").split("moves from")[0].strip_edges()]
@@ -222,9 +222,9 @@ func parse_line(line):
 					if currentCharacter.avatar == null and avatar != null:
 						currentCharacter.set_avatar(avatar)
 		if speaker == hostname and line.contains("Attempting to kick"):
-			aoid = message.split("[")[1].split("]")[0]
+			#aoid = message.split("[")[1].split("]")[0]
 			nameArray = [message.split("]")[1].split("from")[0].strip_edges()]
-			currentCharacter = _find_character(nameArray, aoid)
+			currentCharacter = _find_character(nameArray)#, aoid)
 			if currentCharacter:
 				for currentName in nameArray:
 					currentCharacter.add_name(currentName)
