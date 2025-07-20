@@ -354,22 +354,18 @@ func _on_button_toggled(button_pressed):
 func _on_timeline_value_changed(value):
 	var currentDay = Time.get_date_dict_from_unix_time(startTime)["day"]
 	currentLabel.text = convertDay(currentDay) + " " + Time.get_time_string_from_unix_time(timeline.value + startTime)
-	var line_num
 	for character in characters:
-		var movement = _find_charMove(character.id, value + startTime)
-		var locationID = movement[2]
-		line_num = movement[5]
+		var locationID = _find_charLocation(character.id, value + startTime)
 		if locationID != null and locationID != character.currentLocationID:
-			areas.movement(character, true, locationID, null, null, null, line_num)
-	if last_linecount != line_num:
-		parse_logfile(line_num)
+			areas.movement(character, true, locationID)
 
-func _find_charMove(charID, newTime):
+func _find_charLocation(charID, newTime):
+	#movements.append([currentCharacter.id, int(fromID), int(toID), time])
 	var result = null
-	for move in movements:
-		if move[0] == charID:
-			if move[3] <= newTime:
-				result = move
+	for movement in movements:
+		if movement[0] == charID:
+			if movement[3] <= newTime:
+				result = movement[2]
 			else:
 				return result
 	return result
