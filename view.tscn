@@ -2,9 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://c10dfsnyvpt2s" path="res://map.png" id="1_25yal"]
 [ext_resource type="PackedScene" uid="uid://cpp1f87megsvi" path="res://main_window.tscn" id="1_h1np8"]
-[ext_resource type="Script" path="res://Areas.gd" id="3_5a0sm"]
-[ext_resource type="Script" path="res://Map.gd" id="3_sit67"]
-[ext_resource type="Script" path="res://MapViewCamera.gd" id="3_xct7p"]
+[ext_resource type="Script" uid="uid://co57offjalfxb" path="res://Areas.gd" id="3_5a0sm"]
+[ext_resource type="Script" uid="uid://b4aopkmdacjpx" path="res://Map.gd" id="3_sit67"]
+[ext_resource type="Script" uid="uid://cawu2y142fb6k" path="res://MapViewCamera.gd" id="3_xct7p"]
 
 [node name="View" type="Node2D"]
 
