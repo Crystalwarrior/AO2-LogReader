@@ -9,7 +9,6 @@ func _gui_input(event):
 		var global_mouse_pos = get_global_mouse_position()
 		var old_pos = global_mouse_pos - event.get_relative()
 		var global_relative_pos = global_mouse_pos - old_pos
-		var rect = get_global_rect()
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			if %ScaleButton.button_pressed:
 				var global_diff = global_mouse_pos - global_position

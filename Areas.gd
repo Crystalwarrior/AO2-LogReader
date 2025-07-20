@@ -1,6 +1,6 @@
 extends Control
 
-var area = preload("res://Objects/Area.tscn")
+var area_scene = preload("res://Objects/Area.tscn")
 
 var disconnectIcon = preload("res://Assets/disconnect.svg")
 
@@ -22,7 +22,7 @@ func _is_exist(_name, ID):
 func _create_area(_name, ID):
 	if int(ID) == -1:
 		return
-	var newArea = area.instantiate()
+	var newArea = area_scene.instantiate()
 	newArea.name = str(ID)
 	if _name != null:
 		newArea.get_node("%Name").text = _name
@@ -34,38 +34,19 @@ func _create_area(_name, ID):
 	prevPos = prevArea.position
 
 
-func movement(char, live, toID, to = null, fromID = null, from = null):
-#	print("Move " + char.charName + " to " + to)
+func movement(chara, live, toID, to = null, fromID = null, from = null, line_number = 0):
 	if from != null:
 		if !_is_exist(from, fromID):
 			_create_area(from, fromID)
 	if to != null:
 		if !_is_exist(to, toID):
 			_create_area(to, toID)
-#	char.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-#	for area in self.get_children():
-#		for character in area.get_node("%CharacterContainer").get_children():
-#			print(character.name)
-#			if char.charName != null and character.name == char.charName:
-#				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-#				return
-#			if char.showName != null and character.name == char.showName:
-#				character.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-#				return
 	if live:
-		if char.mapChar != null:
-			char.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-			char.currentLocationID = toID
-			return
+		if chara.mapChar != null:
+			chara.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
+			chara.currentLocationID = toID
 		else:
-			place_character(char, char.get_node("Icon").texture, char.color, toID, to)
-
-	#var charName
-	#if char.charName != null:
-		#charName = char.charName
-	#else:
-		#charName = char.showName
-
+			place_character(chara, chara.get_node("Icon").texture, chara.color, toID, to)
 
 
 func _on_map_view_camera_zoom_change(value):
@@ -73,7 +54,7 @@ func _on_map_view_camera_zoom_change(value):
 
 
 
-func place_character(char, icon, color, toID, to = null):
+func place_character(chara, icon, color, toID, to = null):
 	if to != null:
 		if !_is_exist(to, toID):
 			_create_area(to, toID)
@@ -84,9 +65,9 @@ func place_character(char, icon, color, toID, to = null):
 			newChar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			newChar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			newChar.custom_minimum_size = Vector2(24,24)
-			newChar.name = char.name
-			newChar.tooltip_text = char.name
-			char.mapChar = newChar
+			newChar.name = chara.name
+			newChar.tooltip_text = chara.name
+			chara.mapChar = newChar
 			var disconnection = TextureRect.new()
 			disconnection.texture = disconnectIcon
 			disconnection.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
@@ -102,6 +83,3 @@ func place_character(char, icon, color, toID, to = null):
 			area.get_node("%CharacterContainer").add_child(newChar)
 			newChar.add_child(disconnection)
 			break
-
-func update_mapCharacter(char):
-	pass

@@ -7,22 +7,19 @@ extends Control
 @onready var file_dialog: FileDialog = %FileDialog
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var map_file_dialog: FileDialog = %MapFileDialog
-@onready var timeline = $HBoxContainer/Bottom/HBoxContainer2/HScrollBar
+@onready var timeline = %TimelineBar
 @onready var areas = $"../../Areas"
-@onready var currentLabel = $HBoxContainer/Top/HBoxContainer2/HBoxContainer/CurrentTime
-@onready var endLabel = $HBoxContainer/Top/HBoxContainer2/HBoxContainer/EndTime
-@onready var delay = $HBoxContainer/Top/HBoxContainer2/HBoxContainer2/Delay
-@onready var playButton = $"HBoxContainer/Top/HBoxContainer2/HBoxContainer2/>"
-@onready var playbackButton = $"HBoxContainer/Top/HBoxContainer2/HBoxContainer2/<"
-
-
-
-
-signal movement(char, from, fromID, to, toID)
-
-signal placeChar(char, icon, to, toID)
+@onready var currentLabel = %CurrentTime
+@onready var endLabel = %EndTime
+@onready var delay = %Delay
+@onready var playButton = %">"
+@onready var playbackButton = %"<"
 
 signal swapMap(path)
+
+signal zoom(amt)
+
+signal reset_camera()
 
 const colors = ["#888888","#00FF00","#0000FF","#FF0000","#01FFFE","#FFA6FE","#FFDB66","#006401","#010067","#95003A","#007DB5","#FF00F6","#99EEE8","#774D00","#90FB92","#0076FF","#D5FF00","#FF937E","#6A826C","#FF029D","#FE8900","#7A4782","#7E2DD2","#85A900","#FF0056","#A42400","#00AE7E","#683D3B","#BDC6FF","#263400","#BDD393","#00B917","#9E008E","#001544","#C28C9F","#FF74A3","#01D0FF","#004754","#E56FFE","#788231","#0E4CA1","#91D0CB","#BE9970","#968AE8","#BB8800","#43002C","#DEFF74","#00FFC6","#FFE502","#620E00","#008F9C","#98FF52","#7544B1","#B500FF","#00FF78","#FF6E41","#005F39","#6B6882","#5FAD4E","#A75740","#A5FFD2","#FFB167","#009BFF","#E85EBE",]
 
@@ -46,7 +43,9 @@ var timer = 0
 var playing
 var playing_backward
 
-func _process(delta):
+var last_linecount
+
+func _process(_delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
 		if reload_logfile():
 			logview.text = current_file.get_as_text()
@@ -67,6 +66,21 @@ func _process(delta):
 			timer -= 1
 
 
+func read_ini(ini_path, file_name):
+	var config = FileAccess.open(ini_path, FileAccess.READ)
+	var in_options = false
+	while not config.eof_reached():
+		var line = config.get_line()
+		if line.begins_with("["):
+			in_options = line.strip_edges().to_lower() == "[options]"
+		if in_options:
+			var split = line.split("=")
+			if split.size() > 1 and split[0].strip_edges() == "showname":
+				var showname = split[1].strip_edges()
+				if showname and showname != file_name:
+					shownames[showname] = file_name
+
+
 func generate_shownames():
 	shownames.clear()
 	var dir = DirAccess.open(asset_folder_path + "/characters")
@@ -77,24 +91,18 @@ func generate_shownames():
 			if dir.current_is_dir():
 				var ini_path = dir.get_current_dir() + "/" + file_name + "/char.ini"
 				if FileAccess.file_exists(ini_path):
-					var config = FileAccess.open(ini_path, FileAccess.READ)
-					print("Found .ini file in folder: " + file_name)
-					var in_options = false
-					while not config.eof_reached():
-						var line = config.get_line()
-						if line.begins_with("["):
-							in_options = line.strip_edges().to_lower() == "[options]"
-						if in_options:
-							var split = line.split("=")
-							if split.size() > 1 and split[0].strip_edges() == "showname":
-								var showname = split[1].strip_edges()
-								if showname and showname != file_name:
-									shownames[showname] = file_name
-									print("Showname '" + showname + "' now associated with charfolder " + file_name)
+					read_ini(ini_path, file_name)
+				else:
+					dir.change_dir(file_name)
+					for subdir in dir.get_directories():
+						ini_path = dir.get_current_dir() + "/" + subdir + "/char.ini"
+						if FileAccess.file_exists(ini_path):
+							read_ini(ini_path, dir.get_current_dir().get_file() + "/" + subdir)
+					dir.change_dir("../")
 			file_name = dir.get_next()
 	_find_avatars()
 
-func parse_line(line):
+func parse_line(line, line_number):
 	if not line.begins_with("[") or not line.contains("GMT]"):
 		parsed_view.add_text(line + "\n")
 		return
@@ -125,7 +133,6 @@ func parse_line(line):
 		charfolder = showname
 		if showname != speaker:
 			charfolder = speaker.substr(showname.length()+1).strip_edges().trim_prefix("(").trim_suffix(")")
-
 		if charfolder in shownames:
 			charfolder = shownames[charfolder]
 		if charfolder:
@@ -133,8 +140,8 @@ func parse_line(line):
 			if avatar is ImageTexture:
 					# Add image to the bbcode tag stack
 				parsed_view.add_image(avatar, 24, 24)
-			else:
-				push_warning("Couldn't find char_icon for %s (%s)" % [asset_folder_path + "/characters/" + charfolder + "/char_icon.png", message])
+			#else:
+				#push_warning("Couldn't find char_icon for %s (%s)" % [asset_folder_path + "/characters/" + charfolder + "/char_icon.png", message])
 	if italics:
 		parsed_view.push_italics()
 	if speaker == hostname:
@@ -146,7 +153,7 @@ func parse_line(line):
 	# pop color
 	parsed_view.pop()
 	parsed_view.add_text(": ")
-	parsed_view.add_text(message + "\n")
+	parsed_view.add_text(message.replace("{", "").replace("}", "") + "\n")
 	if italics:
 		parsed_view.pop()
 	if !is_ooc or line.contains("moves from"):
@@ -181,10 +188,10 @@ func parse_line(line):
 			if time > endTime:
 				endTime = time
 			if currentCharacter.currentLocationID == null:
-				movements.append([currentCharacter.id, fromID, fromID, startTime])
-			movements.append([currentCharacter.id, fromID, toID, time])
+				movements.append([currentCharacter.id, fromID, fromID, startTime, line, line_number])
+			movements.append([currentCharacter.id, fromID, toID, time, line, line_number])
 			var live = timeline.value == timeline.max_value
-			areas.movement(currentCharacter, live, toID, to, fromID, from)
+			areas.movement(currentCharacter, live, toID, to, fromID, from, line_number)
 			_update_timeline(live)
 
 func _convert_time(timeStamp):
@@ -211,10 +218,10 @@ func create_character(id):
 
 	return newChar
 
-func _find_avatar(char):
-	if char.charfolder:
-		return get_speakerIcon(char.charfolder)
-	return char.avatar
+func _find_avatar(chara):
+	if chara.charfolder:
+		return get_speakerIcon(chara.charfolder)
+	return chara.avatar
 
 func _find_avatars():
 	for character in characters:
@@ -251,13 +258,17 @@ func get_speakerIcon(charfolder: String):
 	else:
 		return null
 
-func parse_logfile():
+func parse_logfile(to_line = -1):
 	initial_logread = true
 	parsed_view.clear()
 	hostname = ""
 	var lines = logview.text.split("\n")
-	for line in lines:
-		parse_line(line)
+	if to_line == -1:
+		to_line = lines.size()
+	last_linecount = to_line
+	for i in min(lines.size(), to_line+1):
+		var line = lines[i]
+		parse_line(line, i)
 	initial_logread = false
 	if !shownames.is_empty():
 		_find_avatars()
@@ -287,7 +298,7 @@ func open_logfile(path):
 		current_file.close()
 	current_file = FileAccess.open(path, FileAccess.READ)
 	current_file_path = path
-	$HBoxContainer/Top/HBoxContainer/Logfile/LogfileLabel.text = "Current logfile: " + current_file_path
+	%LogfileLabel.text = "Current logfile: " + current_file_path
 	last_date_modified = FileAccess.get_modified_time(path)
 	return current_file
 
@@ -313,7 +324,7 @@ func _on_file_dialog_file_selected(path):
 
 func _on_folder_dialog_dir_selected(dir):
 	asset_folder_path = dir
-	$HBoxContainer/Top/HBoxContainer/Assets/AssetsLabel.text = "Current base: " + asset_folder_path
+	%AssetsLabel.text = "Current base: " + asset_folder_path
 	generate_shownames()
 
 
@@ -343,40 +354,42 @@ func _on_button_toggled(button_pressed):
 func _on_timeline_value_changed(value):
 	var currentDay = Time.get_date_dict_from_unix_time(startTime)["day"]
 	currentLabel.text = convertDay(currentDay) + " " + Time.get_time_string_from_unix_time(timeline.value + startTime)
+	var line_num
 	for character in characters:
-		var locationID = _find_charLocation(character.id, value + startTime)
+		var movement = _find_charMove(character.id, value + startTime)
+		var locationID = movement[2]
+		line_num = movement[5]
 		if locationID != null and locationID != character.currentLocationID:
-			areas.movement(character, true, locationID)
+			areas.movement(character, true, locationID, null, null, null, line_num)
+	if last_linecount != line_num:
+		parse_logfile(line_num)
 
-func _find_charLocation(charID, newTime):
-	#movements.append([currentCharacter.id, int(fromID), int(toID), time])
+func _find_charMove(charID, newTime):
 	var result = null
-	for movement in movements:
-		if movement[0] == charID:
-			if movement[3] <= newTime:
-				result = movement[2]
+	for move in movements:
+		if move[0] == charID:
+			if move[3] <= newTime:
+				result = move
 			else:
 				return result
 	return result
 
 func _on_next_movement_pressed():
 	var newTime = endTime
-	var test
-	for movement in movements:
-			if movement[3] > timeline.value + startTime:
-				if movement[3] < newTime:
-					newTime = movement[3]
-					test = movement
+	for move in movements:
+			if move[3] > timeline.value + startTime:
+				if move[3] < newTime:
+					newTime = move[3]
 	timeline.value = newTime - startTime
 
 
 func _on_prev_step_pressed():
 	var newTime = startTime
 	if timeline.value != 0:
-		for movement in range(movements.size()-1, 0, -1):
-			if movements[movement][3] < timeline.value + startTime:
-					if movements[movement][3] > newTime:
-						newTime = movements[movement][3]
+		for move in range(movements.size()-1, 0, -1):
+			if movements[move][3] < timeline.value + startTime:
+					if movements[move][3] > newTime:
+						newTime = movements[move][3]
 	timeline.value = newTime - startTime
 
 
@@ -425,3 +438,19 @@ func _on_map_file_dialog_file_selected(path):
 
 func _on_map_image_pressed():
 	map_file_dialog.show()
+
+
+func _on_zoom_in_pressed():
+	zoom.emit(1)
+
+
+func _on_zoom_out_pressed():
+	zoom.emit(-1)
+
+
+func _on_reset_camera_pressed():
+	reset_camera.emit()
+
+
+func _on_areas_movement_made(_chara: CharacterNode, line_number: int) -> void:
+	pass
