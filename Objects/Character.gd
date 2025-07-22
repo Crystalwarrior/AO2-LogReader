@@ -24,10 +24,23 @@ func set_color(newColor):
 func set_avatar(texture):
 	$Icon.self_modulate = Color.WHITE
 	$Icon.texture = texture
+	color = get_color_from_texture($Icon.texture)
 	if mapChar:
 		mapChar.self_modulate = Color.WHITE
 		mapChar.texture = texture
 
+func get_color_from_texture(tex: Texture) -> Color:
+	var color = Vector3.ZERO
+	var texture_size = tex.get_size()
+	var image = tex.get_image()
+	
+	for y in range(0, texture_size.y):
+		for x in range(0, texture_size.x):
+			var pixel = image.get_pixel(x, y)
+			color += Vector3(pixel.r, pixel.g, pixel.b)
+			
+	color /= texture_size.x * texture_size.y
+	return Color(color.x, color.y, color.z)
 
 func _on_visibility_toggled(toggle):
 	if mapChar:
