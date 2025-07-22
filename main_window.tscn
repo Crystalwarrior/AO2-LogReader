@@ -76,9 +76,12 @@ layout_mode = 2
 [node name="Buttons" type="HBoxContainer" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom"]
 layout_mode = 2
 
-[node name="RefreshButton" type="Button" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons"]
+[node name="CharactersButton" type="Button" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons"]
 layout_mode = 2
-text = "Refresh"
+focus_mode = 0
+toggle_mode = true
+button_pressed = true
+text = "Characters"
 
 [node name="MapImage" type="Button" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons"]
 layout_mode = 2
@@ -96,12 +99,9 @@ layout_mode = 2
 toggle_mode = true
 text = "Log View"
 
-[node name="CharactersButton" type="Button" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons"]
+[node name="RefreshButton" type="Button" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons"]
 layout_mode = 2
-focus_mode = 0
-toggle_mode = true
-button_pressed = true
-text = "Characters"
+text = "Refresh"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom"]
 layout_mode = 2
@@ -285,28 +285,41 @@ syntax_highlighter = SubResource("CodeHighlighter_cppi3")
 
 [node name="Characters" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+clip_contents = true
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 9
 anchor_bottom = 1.0
-offset_top = 105.0
-offset_right = 355.0
+offset_top = 101.0
+offset_right = 300.0
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Characters"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Characters"]
+clip_contents = true
 layout_mode = 2
-horizontal_scroll_mode = 0
 
-[node name="CharacterList" type="HFlowContainer" parent="Characters/ScrollContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Characters/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Padding" type="Control" parent="Characters/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Characters/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CharacterList" type="HFlowContainer" parent="Characters/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
+clip_contents = true
 layout_mode = 2
 
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Top/HBoxContainer/Logfile/OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Top/HBoxContainer/Assets/LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
-[connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons/RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="toggled" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons/CharactersButton" to="." method="_on_button_toggled"]
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons/MapImage" to="." method="_on_map_image_pressed"]
 [connection signal="toggled" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons/ToggleParsedView" to="." method="_on_toggle_parsed_view_toggled"]
 [connection signal="toggled" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons/ToggleLogView" to="." method="_on_toggle_log_view_toggled"]
-[connection signal="toggled" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons/CharactersButton" to="." method="_on_button_toggled"]
+[connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/Buttons/RefreshButton" to="." method="_on_refresh_button_pressed"]
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/HBoxContainer2/ZoomIn" to="." method="_on_zoom_in_pressed"]
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/HBoxContainer2/ZoomOut" to="." method="_on_zoom_out_pressed"]
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Bottom/HBoxContainer2/ResetCamera" to="." method="_on_reset_camera_pressed"]
