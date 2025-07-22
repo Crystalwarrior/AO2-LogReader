@@ -27,7 +27,7 @@ func set_avatar(texture):
 	color = get_color_from_texture($Icon.texture)
 	if mapChar:
 		mapChar.self_modulate = Color.WHITE
-		mapChar.texture = texture
+		mapChar.texture_rect.texture = texture
 
 func get_color_from_texture(tex: Texture) -> Color:
 	var color = Vector3.ZERO
