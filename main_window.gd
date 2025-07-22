@@ -359,7 +359,7 @@ func open_logfile(path):
 		current_file.close()
 	current_file = FileAccess.open(path, FileAccess.READ)
 	current_file_path = path
-	%LogfileLabel.text = "Current logfile: " + current_file_path
+	%LogfileLabel.text = "Current logfile: " + current_file_path.get_file()
 	last_date_modified = FileAccess.get_modified_time(path)
 	return current_file
 
@@ -385,7 +385,7 @@ func _on_file_dialog_file_selected(path):
 
 func _on_folder_dialog_dir_selected(dir):
 	asset_folder_path = dir
-	%AssetsLabel.text = "Current base: " + asset_folder_path
+	%AssetsLabel.text = "Current base: " + asset_folder_path.get_file()
 	generate_shownames()
 
 
