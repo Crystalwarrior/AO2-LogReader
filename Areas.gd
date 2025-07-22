@@ -2,6 +2,8 @@ extends Control
 
 var area_scene = preload("res://Objects/Area.tscn")
 
+var tracer_scene = preload("res://Objects/tracer.tscn")
+
 var disconnectIcon = preload("res://Assets/disconnect.svg")
 
 var zoomValue = 1
@@ -11,21 +13,25 @@ var prevPos
 
 var waitList = {}
 
-func _is_exist(_name, ID):
+func _is_exist(ID, _name):
 	for child in self.get_children():
 		if child.name == str(ID):
 			if child.get_node("%Name").text == "" and _name != null:
-				child.get_node("%Name").text = _name
+				child.get_node("%Name").text = "[%s] %s" % [ID, _name]
 			return true
 	return false
 
-func _create_area(_name, ID):
+func create_area(ID, _name):
+	if _is_exist(ID, _name):
+		return
 	if int(ID) == -1:
 		return
 	var newArea = area_scene.instantiate()
 	newArea.name = str(ID)
 	if _name != null:
-		newArea.get_node("%Name").text = _name
+		newArea.get_node("%Name").text = "[%s] %s" % [ID, _name]
+	else:
+		newArea.get_node("%Name").text = ID
 	if prevArea:
 		if prevArea.position == prevPos:
 			newArea.position += prevArea.position + Vector2(prevArea.size.x + 10, 0)
@@ -34,17 +40,28 @@ func _create_area(_name, ID):
 	prevPos = prevArea.position
 
 
-func movement(chara, live, toID, to = null, fromID = null, from = null, line_number = 0):
-	if from != null:
-		if !_is_exist(from, fromID):
-			_create_area(from, fromID)
-	if to != null:
-		if !_is_exist(to, toID):
-			_create_area(to, toID)
+func movement(chara, live, toID, to = null, fromID = null, from = null):
+	if fromID != null:
+		if !_is_exist(fromID, from):
+			create_area(fromID, from)
+	if toID != null:
+		if !_is_exist(toID, to):
+			create_area(toID, to)
+		if to != null and self.get_node(toID).get_node("%Name").text != to:
+			self.get_node(toID).get_node("%Name").text = "[%s] %s" % [toID, to]
+		if from != null and self.get_node(fromID).get_node("%Name").text != from:
+			self.get_node(fromID).get_node("%Name").text = "[%s] %s" % [fromID, from]
 	if live:
 		if chara.mapChar != null:
+			var tracer = tracer_scene.instantiate()
+			tracer.modulate = chara.color
+			self.add_child(tracer)
+			tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
 			chara.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
 			chara.currentLocationID = toID
+			await get_tree().process_frame
+			tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
+			tracer.start()
 		else:
 			place_character(chara, chara.get_node("Icon").texture, chara.color, toID, to)
 
@@ -56,8 +73,8 @@ func _on_map_view_camera_zoom_change(value):
 
 func place_character(chara, icon, color, toID, to = null):
 	if to != null:
-		if !_is_exist(to, toID):
-			_create_area(to, toID)
+		if !_is_exist(toID, to):
+			create_area(toID, to)
 
 	for area in self.get_children():
 		if area.name == toID:
