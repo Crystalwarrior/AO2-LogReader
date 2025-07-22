@@ -1,7 +1,5 @@
 extends Line2D
 
-@onready var shadow = %Shadow
-
 func do_add_point(pos: Vector2, index: int = -1):
 	add_point(pos, index)
 

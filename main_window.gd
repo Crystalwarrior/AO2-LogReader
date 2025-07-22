@@ -7,6 +7,7 @@ extends Control
 @onready var file_dialog: FileDialog = %FileDialog
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var map_file_dialog: FileDialog = %MapFileDialog
+@onready var layout_file_dialog: FileDialog = %LayoutFileDialog
 @onready var timeline = %TimelineBar
 @onready var areas = $"../../Areas"
 @onready var currentLabel = %CurrentTime
@@ -20,6 +21,11 @@ signal swapMap(path)
 signal zoom(amt)
 
 signal reset_camera()
+
+signal map_change_color(color:Color)
+
+signal save_layout()
+signal load_layout(layout)
 
 const colors = ["#888888","#00FF00","#0000FF","#FF0000","#01FFFE","#FFA6FE","#FFDB66","#006401","#010067","#95003A","#007DB5","#FF00F6","#99EEE8","#774D00","#90FB92","#0076FF","#D5FF00","#FF937E","#6A826C","#FF029D","#FE8900","#7A4782","#7E2DD2","#85A900","#FF0056","#A42400","#00AE7E","#683D3B","#BDC6FF","#263400","#BDD393","#00B917","#9E008E","#001544","#C28C9F","#FF74A3","#01D0FF","#004754","#E56FFE","#788231","#0E4CA1","#91D0CB","#BE9970","#968AE8","#BB8800","#43002C","#DEFF74","#00FFC6","#FFE502","#620E00","#008F9C","#98FF52","#7544B1","#B500FF","#00FF78","#FF6E41","#005F39","#6B6882","#5FAD4E","#A75740","#A5FFD2","#FFB167","#009BFF","#E85EBE",]
 
@@ -116,7 +122,7 @@ func parse_line(line):
 		if line.begins_with("=== "):
 			var areaID = line.split("]")[0].split("[")[1].strip_edges()
 			var areaName = line.split("]")[1].split("(")[0].strip_edges()
-			$"../../Areas".create_area(areaName, areaID)
+			areas.create_area(areaName, areaID)
 		# elif line.contains("users:") == false:
 		# 	var charID
 		# 	var showName
@@ -511,3 +517,39 @@ func _on_reset_camera_pressed():
 
 func _on_areas_movement_made(_chara: CharacterNode, line_number: int) -> void:
 	pass
+
+
+func _on_map_color_picker_color_changed(color: Color) -> void:
+	map_change_color.emit(color)
+
+
+func _on_save_layout_pressed() -> void:
+	layout_file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	layout_file_dialog.title = "Save Layout File"
+	layout_file_dialog.ok_button_text = "Save"
+	layout_file_dialog.show()
+
+
+func _on_load_layout_pressed() -> void:
+	layout_file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	layout_file_dialog.title = "Open Layout File"
+	layout_file_dialog.ok_button_text = "Open"
+	layout_file_dialog.show()
+
+
+func _on_layout_file_dialog_file_selected(path: String) -> void:
+	if layout_file_dialog.file_mode == FileDialog.FILE_MODE_OPEN_FILE:
+		if not FileAccess.file_exists(path):
+			return
+		var layout_file = FileAccess.open(path, FileAccess.READ)
+		var json = JSON.new()
+		var error = json.parse(layout_file.get_as_text())
+		if error != OK:
+			print("Failed to open layout file: %" % path)
+			return
+		var data = json.data
+		areas.load_data(data)
+	elif layout_file_dialog.file_mode == FileDialog.FILE_MODE_SAVE_FILE:
+		var layout_file = FileAccess.open(path, FileAccess.WRITE)
+		var json_string = JSON.stringify(areas.save_data())
+		layout_file.store_line(json_string)

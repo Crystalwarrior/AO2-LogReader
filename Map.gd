@@ -12,3 +12,7 @@ func load_image(path):
 
 func _on_main_window_swap_map(path):
 	texture = load_image(path)
+
+
+func _on_main_window_map_change_color(color: Color) -> void:
+	self.modulate = color

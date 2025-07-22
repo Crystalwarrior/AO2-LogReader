@@ -1,5 +1,6 @@
 extends Control
 
+@onready var id = %ID
 
 var resize_offset: Vector2 = Vector2(0, 0)
 
@@ -21,3 +22,18 @@ func _gui_input(event):
 		else:
 			if resize_offset != Vector2(0, 0):
 				resize_offset = Vector2(0, 0)
+
+func save_data():
+	return {
+		"id": int(self.name),
+		"name": %Name.text,
+		"position": position,
+		"size": size,
+	}
+
+
+func load_data(data):
+	#%ID.text = self.name
+	%Name.text = data.name
+	position = str_to_var("Vector2" + data.position)
+	size = str_to_var("Vector2" + data.size)
