@@ -10,9 +10,6 @@ var map_character_scene = preload("res://Objects/map_character.tscn")
 
 var zoomValue = 1
 
-var prevArea
-var prevPos
-
 var waitList = {}
 
 func _is_exist(ID, _name):
@@ -36,11 +33,10 @@ func create_area(ID, _name = null):
 		newArea.get_node("%Name").text = _name
 	else:
 		newArea.get_node("%Name").text = str(ID)
-	if prevArea:
-		if prevArea.position == prevPos:
-			newArea.position += prevArea.position + Vector2(prevArea.size.x + 10, 0)
-	prevArea = newArea
-	prevPos = prevArea.position
+	var index = newArea.get_index()
+	var max_columns = 12
+	var padding = 10
+	newArea.position = Vector2((newArea.size.x + padding) * (index % max_columns), -((newArea.size.y + padding) * floor(index / max_columns)))
 
 
 func movement(chara, live, toID, to = null, fromID = null, from = null):
@@ -84,8 +80,8 @@ func place_character(chara, icon, color, toID, to = null):
 			var newChar = map_character_scene.instantiate()
 			#PLACE CHARACTER
 			area.get_node("%CharacterContainer").add_child(newChar)
-			newChar.name = chara.name
-			newChar.tooltip_text = chara.name
+			newChar.name = "[%s] %s" % [chara.aoid, chara.charfolder]
+			newChar.tooltip_text = newChar.name
 			chara.mapChar = newChar
 			if icon != null:
 				newChar.texture_rect.texture = icon
