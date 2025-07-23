@@ -2,9 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://c10dfsnyvpt2s" path="res://map.png" id="1_25yal"]
 [ext_resource type="PackedScene" uid="uid://cpp1f87megsvi" path="res://main_window.tscn" id="1_h1np8"]
-[ext_resource type="Script" uid="uid://co57offjalfxb" path="res://Areas.gd" id="3_5a0sm"]
+[ext_resource type="Script" uid="uid://hxbfno612335" path="res://Areas.gd" id="3_5a0sm"]
 [ext_resource type="Script" uid="uid://b4aopkmdacjpx" path="res://Map.gd" id="3_sit67"]
-[ext_resource type="Script" uid="uid://cawu2y142fb6k" path="res://MapViewCamera.gd" id="3_xct7p"]
+[ext_resource type="Script" uid="uid://ch8l8q7gjt7mc" path="res://MapViewCamera.gd" id="3_xct7p"]
 
 [node name="View" type="Node2D"]
 
@@ -13,21 +13,28 @@
 [node name="MainWindow" parent="CanvasLayer" instance=ExtResource("1_h1np8")]
 
 [node name="Map" type="Sprite2D" parent="."]
+modulate = Color(0.501407, 0.501406, 0.501406, 1)
 position = Vector2(574.333, 323.5)
 scale = Vector2(0.597222, 0.597222)
 texture = ExtResource("1_25yal")
 script = ExtResource("3_sit67")
 
 [node name="Areas" type="Control" parent="."]
+unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 1
 script = ExtResource("3_5a0sm")
 
-[node name="MapViewCamera" type="Camera2D" parent="."]
+[node name="CameraResetPoint" type="Marker2D" parent="."]
+position = Vector2(576, 324)
+
+[node name="MapViewCamera" type="Camera2D" parent="." node_paths=PackedStringArray("camera_reset_point")]
 position = Vector2(576, 324)
 script = ExtResource("3_xct7p")
+camera_reset_point = NodePath("../CameraResetPoint")
 
-[connection signal="movement" from="CanvasLayer/MainWindow" to="Areas" method="_on_main_window_movement"]
-[connection signal="placeChar" from="CanvasLayer/MainWindow" to="Areas" method="_on_main_window_place_char"]
+[connection signal="map_change_color" from="CanvasLayer/MainWindow" to="Map" method="_on_main_window_map_change_color"]
+[connection signal="reset_camera" from="CanvasLayer/MainWindow" to="MapViewCamera" method="_on_main_window_reset_camera"]
 [connection signal="swapMap" from="CanvasLayer/MainWindow" to="Map" method="_on_main_window_swap_map"]
+[connection signal="zoom" from="CanvasLayer/MainWindow" to="MapViewCamera" method="_on_main_window_zoom"]

@@ -1,13 +1,14 @@
 extends Control
 
-var area = preload("res://Objects/Area.tscn")
+var area_scene = preload("res://Objects/Area.tscn")
+
+var tracer_scene = preload("res://Objects/tracer.tscn")
 
 var disconnectIcon = preload("res://Assets/disconnect.svg")
 
-var zoomValue = 1
+var map_character_scene = preload("res://Objects/map_character.tscn")
 
-var prevArea
-var prevPos
+var zoomValue = 1
 
 var waitList = {}
 
@@ -19,26 +20,26 @@ func _is_exist(ID, _name):
 			return true
 	return false
 
-func create_area(ID, _name):
+func create_area(ID, _name = null):
 	if _is_exist(ID, _name):
 		return
 	if int(ID) == -1:
 		return
-	var newArea = area.instantiate()
+	var newArea = area_scene.instantiate()
+	self.add_child(newArea)
 	newArea.name = str(ID)
+	newArea.id.text = "[%s]" % ID
 	if _name != null:
 		newArea.get_node("%Name").text = _name
 	else:
-		newArea.get_node("%Name").text = ID
-	if prevArea:
-		if prevArea.position == prevPos:
-			newArea.position += prevArea.position + Vector2(prevArea.size.x + 10, 0)
-	self.add_child(newArea)
-	prevArea = newArea
-	prevPos = prevArea.position
+		newArea.get_node("%Name").text = str(ID)
+	var index = newArea.get_index()
+	var max_columns = 12
+	var padding = 10
+	newArea.position = Vector2((newArea.size.x + padding) * (index % max_columns), -((newArea.size.y + padding) * floor(index / max_columns)))
 
 
-func movement(char, live, toID, to = null, fromID = null, from = null):
+func movement(chara, live, toID, to = null, fromID = null, from = null):
 	if fromID != null:
 		if !_is_exist(fromID, from):
 			create_area(fromID, from)
@@ -50,13 +51,18 @@ func movement(char, live, toID, to = null, fromID = null, from = null):
 		if from != null and self.get_node(fromID).get_node("%Name").text != from:
 			self.get_node(fromID).get_node("%Name").text = from
 	if live:
-		if char.mapChar != null:
-			char.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
-			char.currentLocationID = toID
-			return
+		if chara.mapChar != null:
+			var tracer = tracer_scene.instantiate()
+			tracer.modulate = chara.color
+			self.get_parent().add_child(tracer)
+			tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
+			chara.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
+			chara.currentLocationID = toID
+			await get_tree().process_frame
+			tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
+			tracer.start()
 		else:
-			place_character(char, char.get_node("Icon").texture, char.color, toID, to)
-
+			place_character(chara, chara.get_node("Icon").texture, chara.color, toID, to)
 
 
 func _on_map_view_camera_zoom_change(value):
@@ -64,35 +70,35 @@ func _on_map_view_camera_zoom_change(value):
 
 
 
-func place_character(char, icon, color, toID, to = null):
+func place_character(chara, icon, color, toID, to = null):
 	if to != null:
 		if !_is_exist(toID, to):
 			create_area(toID, to)
 
 	for area in self.get_children():
 		if area.name == toID:
-			var newChar = TextureRect.new()
-			newChar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			newChar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			newChar.custom_minimum_size = Vector2(24,24)
-			newChar.name = char.name
-			newChar.tooltip_text = char.name
-			char.mapChar = newChar
-			var disconnection = TextureRect.new()
-			disconnection.texture = disconnectIcon
-			disconnection.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-			disconnection.layout_mode = 1
-			disconnection.set_anchors_preset(Control.PRESET_FULL_RECT)
-			disconnection.self_modulate = Color("ffffff8a")
-			disconnection.visible = false
-			if icon != null:
-				newChar.texture = icon
-				if newChar.texture.resource_path == "res://Assets/Bean.png":
-					newChar.self_modulate = color
+			var newChar = map_character_scene.instantiate()
 			#PLACE CHARACTER
 			area.get_node("%CharacterContainer").add_child(newChar)
-			newChar.add_child(disconnection)
+			newChar.name = "[%s] %s" % [chara.aoid, chara.charfolder]
+			newChar.tooltip_text = newChar.name
+			chara.mapChar = newChar
+			if icon != null:
+				newChar.texture_rect.texture = icon
+				if newChar.texture_rect.texture.resource_path == "res://Assets/Bean.png":
+					newChar.self_modulate = color
 			break
 
-func update_mapCharacter(char):
-	pass
+func save_data():
+	var areas = []
+	for child in self.get_children():
+		areas.append(child.save_data())
+	return areas
+
+
+func load_data(data):
+	while self.get_child_count() < data.size():
+		create_area(self.get_child_count())
+	for i in get_child_count():
+		var child = get_child(i)
+		child.load_data(data[i])

@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://c1r18f760s7yv"]
+[gd_scene load_steps=7 format=3 uid="uid://c1r18f760s7yv"]
 
-[ext_resource type="Script" uid="uid://bkwri7fykoskl" path="res://Objects/Area.gd" id="1_kgmpt"]
+[ext_resource type="Script" uid="uid://btub578siudlf" path="res://Objects/Area.gd" id="1_kgmpt"]
 [ext_resource type="Texture2D" uid="uid://bfdtgpvvqgd4e" path="res://Objects/handler.png" id="2_tkvok"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uy4v7"]
@@ -13,23 +13,40 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0, 0.937255, 0.717647, 1)
+border_color = Color(1, 1, 1, 0.247059)
 border_blend = true
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 expand_margin_left = 1.0
 expand_margin_top = 1.0
 expand_margin_right = 1.0
 expand_margin_bottom = 1.0
+shadow_size = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_0ejju"]
+font_size = 12
+font_color = Color(0, 1, 0, 1)
+outline_size = 4
+outline_color = Color(0, 0.109804, 0, 1)
+shadow_color = Color(0, 0, 0, 0.498039)
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="LabelSettings" id="LabelSettings_jiv8i"]
+font_size = 14
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 5
 shadow_color = Color(0, 0, 0, 0.498039)
 shadow_offset = Vector2(0, 2)
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_0ejju"]
+blend_mode = 1
+
 [node name="PanelContainer" type="PanelContainer"]
-offset_right = 68.0
-offset_bottom = 68.0
+offset_right = 128.0
+offset_bottom = 128.0
 mouse_filter = 1
 mouse_default_cursor_shape = 6
 theme_override_styles/panel = SubResource("StyleBoxFlat_uy4v7")
@@ -38,12 +55,26 @@ script = ExtResource("1_kgmpt")
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="Name" type="Label" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ID" type="Label" parent="VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "[0]"
+label_settings = SubResource("LabelSettings_0ejju")
+horizontal_alignment = 1
+
+[node name="Name" type="Label" parent="VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 z_index = 2
+custom_minimum_size = Vector2(18, 0)
 layout_mode = 2
+text = "Gamer Gaming"
 label_settings = SubResource("LabelSettings_jiv8i")
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -53,11 +84,12 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 6
 alignment = 1
 
 [node name="ScaleButton" type="TextureButton" parent="."]
 unique_name_in_owner = true
+material = SubResource("CanvasItemMaterial_0ejju")
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_horizontal = 8

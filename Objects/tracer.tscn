@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://di6psiew4w8gc"]
+
+[ext_resource type="Script" uid="uid://bayb36mi7q2m7" path="res://Objects/tracer.gd" id="1_crrqk"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_crrqk"]
+blend_mode = 1
+
+[node name="Tracer" type="Line2D"]
+material = SubResource("CanvasItemMaterial_crrqk")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+script = ExtResource("1_crrqk")
