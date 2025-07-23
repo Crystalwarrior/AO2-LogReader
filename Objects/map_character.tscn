@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://lx3t8myd2673"]
+[gd_scene load_steps=5 format=3 uid="uid://lx3t8myd2673"]
 
 [ext_resource type="Script" uid="uid://dk1yowv7htilo" path="res://Objects/map_character.gd" id="1_kr3cb"]
 [ext_resource type="Texture2D" uid="uid://cdpxsjmlhhqds" path="res://Assets/Bean.png" id="2_70u3k"]
+[ext_resource type="Texture2D" uid="uid://b6dagfaoejst8" path="res://Assets/disconnect.svg" id="3_70u3k"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kr3cb"]
 bg_color = Color(1, 1, 1, 0.352941)
@@ -21,5 +22,16 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 texture = ExtResource("2_70u3k")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DCState" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+texture = ExtResource("3_70u3k")
 expand_mode = 1
 stretch_mode = 5

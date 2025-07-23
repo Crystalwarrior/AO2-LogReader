@@ -2,8 +2,10 @@ extends HBoxContainer
 class_name CharacterNode
 
 var id
+var aoid
 var charfolder
 var names = []
+var current_name = ""
 var color
 var mapChar
 var avatar
@@ -13,21 +15,29 @@ var currentLocationID = null
 func add_name(newName):
 	if !names.has(newName):
 		names.append(newName)
-		$Names.add_item(newName)
-	if !$Namelock.button_pressed:
-		$Names.select($Names.item_count-1)
+		%Names.add_item(newName)
+	if !%Namelock.button_pressed:
+		var idx = %Names.item_count-1
+		%Names.select(idx)
+		_on_names_item_selected(idx)
+	update_mapchar()
 
 func set_color(newColor):
 	color = newColor
-	$Icon.self_modulate = color
+	%Icon.self_modulate = color
 
 func set_avatar(texture):
-	$Icon.self_modulate = Color.WHITE
-	$Icon.texture = texture
-	color = get_color_from_texture($Icon.texture)
+	%Icon.self_modulate = Color.WHITE
+	%Icon.texture = texture
+	color = get_color_from_texture(%Icon.texture)
 	if mapChar:
 		mapChar.self_modulate = Color.WHITE
 		mapChar.texture_rect.texture = texture
+
+func set_aoid(to_aoid):
+	aoid = to_aoid
+	%ClientID.text = "[%s]" % ["?" if aoid == null else aoid]
+	update_mapchar()
 
 func get_color_from_texture(tex: Texture) -> Color:
 	var color = Vector3.ZERO
@@ -45,3 +55,19 @@ func get_color_from_texture(tex: Texture) -> Color:
 func _on_visibility_toggled(toggle):
 	if mapChar:
 		mapChar.visible = !toggle
+
+func set_disconnect_state(state):
+	disconnected = state
+	%DCState.visible = disconnected
+	if mapChar:
+		mapChar.dc_state.visible = false
+
+func update_mapchar():
+	if not mapChar:
+		return
+	mapChar.name = "[%s] %s" % ["?" if aoid == null else aoid, current_name]
+	mapChar.tooltip_text = mapChar.name
+
+func _on_names_item_selected(index: int) -> void:
+	current_name = %Names.get_item_text(%Names.selected)
+	update_mapchar()
