@@ -56,9 +56,16 @@ var last_linecount
 func _process(_delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
 		if reload_logfile():
-			logview.text = current_file.get_as_text()
+			while current_file.get_position() < current_file.get_length():
+				var line = current_file.get_line()
+				# end-of-file newline gets treated as a separate line, and shows up as blank
+				if line == "":
+					continue
+				parse_line(line)
+				logview.text += "\n"+line
+			if !shownames.is_empty():
+				_find_avatars()
 			scroll_to_last_line()
-			parse_logfile()
 	if playing and timeline.value != endTime - startTime:
 		if timer <= 0:
 			timeline.value += 1
@@ -146,10 +153,9 @@ func parse_line(line):
 		# 		newChar.charfolder = folderName
 		# 	else:
 		# 		areaChar.charfolder = folderName
-
-
+	parsed_view.newline()
 	if not line.begins_with("[") or not line.contains("GMT]"):
-		parsed_view.add_text(line + "\n")
+		parsed_view.add_text(line)
 		return
 	var is_ooc = false
 	if line.begins_with("[OOC]"):
@@ -201,7 +207,7 @@ func parse_line(line):
 	# pop color
 	parsed_view.pop()
 	parsed_view.add_text(": ")
-	parsed_view.add_text(message.replace("{", "").replace("}", "") + "\n")
+	parsed_view.add_text(message.replace("{", "").replace("}", ""))
 	if italics:
 		parsed_view.pop()
 
@@ -325,20 +331,20 @@ func get_speakerIcon(charfolder: String):
 	else:
 		return null
 
-func parse_logfile(to_line = -1):
+func parse_logfile():
 	initial_logread = true
 	parsed_view.clear()
 	hostname = ""
-	var lines = logview.text.split("\n")
-	if to_line == -1:
-		to_line = lines.size()
-	last_linecount = to_line
-	for i in min(lines.size(), to_line+1):
+	var text = current_file.get_as_text()
+	logview.text = text
+	var lines = text.strip_edges().split("\n")
+	for i in lines.size():
 		var line = lines[i]
 		parse_line(line)
 	initial_logread = false
 	if !shownames.is_empty():
 		_find_avatars()
+	current_file.seek_end()
 
 func _update_timeline(live):
 	timeline.max_value = endTime - startTime
@@ -366,11 +372,15 @@ func open_logfile(path):
 	current_file = FileAccess.open(path, FileAccess.READ)
 	current_file_path = path
 	%LogfileLabel.text = "Current logfile: " + current_file_path.get_file()
-	last_date_modified = FileAccess.get_modified_time(path)
-	return current_file
+	last_date_modified = FileAccess.get_modified_time(current_file_path)
+	return current_file 
 
 func reload_logfile():
-	return open_logfile(current_file_path)
+	if not current_file:
+		return null
+	%LogfileLabel.text = "Current logfile: " + current_file_path.get_file()
+	last_date_modified = FileAccess.get_modified_time(current_file_path)
+	return current_file 
 
 
 func scroll_to_last_line():
@@ -384,9 +394,8 @@ func _on_logfile_button_pressed():
 
 func _on_file_dialog_file_selected(path):
 	if open_logfile(path):
-		logview.text = current_file.get_as_text()
-		scroll_to_last_line()
 		parse_logfile()
+		scroll_to_last_line()
 
 
 func _on_folder_dialog_dir_selected(dir):
@@ -401,9 +410,8 @@ func _on_link_assets_button_pressed():
 
 func _on_refresh_button_pressed():
 	if reload_logfile():
-		logview.text = current_file.get_as_text()
-		scroll_to_last_line()
 		parse_logfile()
+		scroll_to_last_line()
 
 
 func _on_toggle_log_view_toggled(button_pressed):
