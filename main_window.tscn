@@ -369,10 +369,11 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CharacterList" type="HFlowContainer" parent="Characters/VBoxContainer/ScrollContainer"]
+[node name="CharacterList" type="VBoxContainer" parent="Characters/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
+size_flags_horizontal = 3
 
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Top/VBoxContainer/Logfile/OpenLogfileButton" to="." method="_on_logfile_button_pressed"]
 [connection signal="pressed" from="PanelContainer/MainSeparation/ButtonsLeft/Top/VBoxContainer/Assets/LinkAssetsButton" to="." method="_on_link_assets_button_pressed"]
