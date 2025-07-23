@@ -142,6 +142,7 @@ text = "Refresh"
 layout_mode = 2
 
 [node name="VSeparator3" type="VSeparator" parent="PanelContainer/MainSeparation/ButtonsLeft/Bottom/VSeparator3"]
+layout_mode = 0
 
 [node name="TimelineRight" type="VBoxContainer" parent="PanelContainer/MainSeparation"]
 layout_mode = 2
