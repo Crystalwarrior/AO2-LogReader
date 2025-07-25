@@ -11,6 +11,10 @@ var mapChar
 var avatar
 var disconnected
 var currentLocationID = null
+var is_visible = true
+
+signal toggled_focus(toggle: bool)
+signal toggled_visible(toggle: bool)
 
 func add_name(newName):
 	if !names.has(newName):
@@ -53,8 +57,10 @@ func get_color_from_texture(tex: Texture) -> Color:
 	return Color(color.x, color.y, color.z)
 
 func _on_visibility_toggled(toggle):
+	is_visible = toggle
 	if mapChar:
-		mapChar.visible = !toggle
+		mapChar.visible = toggle
+	toggled_visible.emit(toggle)
 
 func set_disconnect_state(state):
 	disconnected = state
@@ -71,3 +77,7 @@ func update_mapchar():
 func _on_names_item_selected(index: int) -> void:
 	current_name = %Names.get_item_text(%Names.selected)
 	update_mapchar()
+
+
+func _on_focus_toggled(toggled_on: bool) -> void:
+	toggled_focus.emit(toggled_on)

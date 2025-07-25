@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cpp1f87megsvi"]
+[gd_scene load_steps=4 format=3 uid="uid://cpp1f87megsvi"]
 
 [ext_resource type="Script" uid="uid://bqwlfqwjlrblw" path="res://main_window.gd" id="1_nrrhj"]
+[ext_resource type="Texture2D" uid="uid://bm342d3lsa4qa" path="res://Assets/GuiVisibilityVisible.svg" id="2_tyee0"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_cppi3"]
 number_color = Color(0.392157, 1, 0.780392, 1)
@@ -369,7 +370,18 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CharacterList" type="VBoxContainer" parent="Characters/VBoxContainer/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Characters/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DisplayInvisibleButton" type="CheckButton" parent="Characters/VBoxContainer/ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Display invisible in List"
+icon = ExtResource("2_tyee0")
+
+[node name="CharacterList" type="VBoxContainer" parent="Characters/VBoxContainer/ScrollContainer/VBoxContainer"]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
@@ -400,3 +412,4 @@ size_flags_horizontal = 3
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
 [connection signal="close_requested" from="ParsedViewWindow" to="." method="_on_parsed_view_window_close_requested"]
 [connection signal="close_requested" from="LogViewWindow" to="." method="_on_log_view_window_close_requested"]
+[connection signal="toggled" from="Characters/VBoxContainer/ScrollContainer/VBoxContainer/DisplayInvisibleButton" to="." method="_on_display_invisible_button_toggled"]

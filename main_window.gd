@@ -41,7 +41,6 @@ var hostname: String
 
 var initial_logread = false
 var shownames: Dictionary = {}
-var characters = []
 var idCounter = 0
 var movements = []
 var startTime
@@ -53,6 +52,8 @@ var areasRead
 var areasBegin = ["[1", "[2", "[3", "[4", "[5", "[6", "[7", "[8", "[9", "[0", "[CM]", "[GM]", "[M]", "=== ", "  ◽", "  ◾"]
 
 var last_linecount
+
+var display_invisible = true
 
 func _process(_delta):
 	if current_file_path and last_date_modified != FileAccess.get_modified_time(current_file_path):
@@ -163,6 +164,7 @@ func parse_line(line):
 		is_ooc = true
 		line = line.substr("[OOC]".length())
 	var timestamp = line.substr(0, line.find("]"))
+	var time = _convert_time(timestamp)
 	line = line.substr(timestamp.length()+1)
 	var message = line.substr(line.find(":")+1).strip_edges()
 	var speaker = line.substr(0, line.find(":")).strip_edges()
@@ -248,7 +250,7 @@ func parse_line(line):
 			currentCharacter.charfolder = charfolder
 			currentCharacter.add_name(charfolder)
 		if talkAreaID != null and currentCharacter.currentLocationID != talkAreaID:
-			movements.append([currentCharacter.id, currentCharacter.currentLocationID, talkAreaID, _convert_time(timestamp)])
+			movements.append([currentCharacter.id, currentCharacter.currentLocationID, talkAreaID, time])
 			currentCharacter.currentLocationID = talkAreaID
 			var live = timeline.value == timeline.max_value
 			areas.movement(currentCharacter, live, talkAreaID)
@@ -276,7 +278,6 @@ func parse_line(line):
 			var fromID = line.split("] ")[1].split("[")[1]
 			var to = line.split("] ")[3].rsplit(".")[0]
 			var toID = line.split("] ")[2].split("[")[1]
-			var time = _convert_time(timestamp)
 			if startTime == null:
 				startTime = time
 			if time > endTime:
@@ -310,9 +311,25 @@ func create_character(aoid = null):
 	if aoid:
 		newChar.set_aoid(aoid)
 	%CharacterList.add_child(newChar)
-	characters.append(newChar)
+	Globals.characters.append(newChar)
+	
+	newChar.toggled_focus.connect(_on_character_focus_pressed.bind(newChar))
+	newChar.toggled_visible.connect(_on_character_visibility_pressed.bind(newChar))
 
 	return newChar
+
+
+func _on_character_focus_pressed(toggled: bool, chara: CharacterNode):
+	if toggled:
+		Globals.focused_characters.append(chara)
+	else:
+		Globals.focused_characters.erase(chara)
+	Globals.update_visible_characters(Globals.get_visible_areas())
+
+
+func _on_character_visibility_pressed(toggled: bool, chara: CharacterNode):
+	update_list_invisible()
+
 
 func _get_avatar(chara):
 	if chara.charfolder:
@@ -327,11 +344,11 @@ func _set_avatar(chara):
 		chara.set_avatar(avatar)
 
 func _find_avatars():
-	for character in characters:
+	for character in Globals.characters:
 		_set_avatar(character)
 
 func _find_character(nameArray, aoid = null):
-	for character in characters:
+	for character in Globals.characters:
 		for alias in character.names:
 			if aoid != null and character.aoid != null and character.aoid != aoid:
 				continue
@@ -340,7 +357,7 @@ func _find_character(nameArray, aoid = null):
 	return null
 
 func _find_character_by_aoid(aoid):
-	for character in characters:
+	for character in Globals.characters:
 		if character.aoid == aoid:
 			return character
 	return null
@@ -352,8 +369,8 @@ func _clean_name(speaker):
 	if speaker.split("(").size() > 1:
 		var splitArray = speaker.split("(")
 		speaker = splitArray[0].strip_edges() + "(" + splitArray[splitArray.size()-1].strip_edges()
-		speakerArray.append(splitArray[0].strip_edges())
 		speakerArray.append(splitArray[splitArray.size()-1].strip_edges().rstrip(")"))
+		speakerArray.append(splitArray[0].strip_edges())
 	elif speaker != "":
 		speakerArray.append(speaker.strip_edges())
 	return speakerArray
@@ -467,7 +484,7 @@ func _on_button_toggled(button_pressed):
 func _on_timeline_value_changed(value):
 	var currentDay = Time.get_date_dict_from_unix_time(startTime)["day"]
 	currentLabel.text = convertDay(currentDay) + " " + Time.get_time_string_from_unix_time(timeline.value + startTime)
-	for character in characters:
+	for character in Globals.characters:
 		var locationID = _find_charLocation(character.id, value + startTime)
 		if locationID != null and locationID != character.currentLocationID:
 			areas.movement(character, true, locationID)
@@ -599,3 +616,13 @@ func _on_layout_file_dialog_file_selected(path: String) -> void:
 		var layout_file = FileAccess.open(path, FileAccess.WRITE)
 		var json_string = JSON.stringify(areas.save_data())
 		layout_file.store_line(json_string)
+
+
+func update_list_invisible():
+	for character in Globals.characters:
+		character.visible = character.is_visible or display_invisible
+
+
+func _on_display_invisible_button_toggled(toggled_on: bool) -> void:
+	display_invisible = toggled_on
+	update_list_invisible()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ddmxeq6e646fp"]
+[gd_scene load_steps=10 format=3 uid="uid://ddmxeq6e646fp"]
 
 [ext_resource type="Script" uid="uid://ctyxasf80u61f" path="res://Objects/Character.gd" id="1_d0qnn"]
 [ext_resource type="Texture2D" uid="uid://cdpxsjmlhhqds" path="res://Assets/Bean.png" id="1_ov07w"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://oiisi4853yoi" path="res://Assets/GuiVisibilityHidden.svg" id="3_swi4v"]
 [ext_resource type="Texture2D" uid="uid://tb7bg7edqrdy" path="res://Assets/lock_open.svg" id="6_w7es8"]
 [ext_resource type="Texture2D" uid="uid://i5m88wihagg1" path="res://Assets/lock_close.svg" id="7_eqgw6"]
+[ext_resource type="Texture2D" uid="uid://70omar7wrme2" path="res://Assets/focus_off.svg" id="8_k7n5l"]
+[ext_resource type="Texture2D" uid="uid://d2ptwkg5x7pyt" path="res://Assets/focus.svg" id="9_k2lum"]
 
 [node name="HBoxContainer" type="HBoxContainer"]
 offset_right = 285.0
@@ -18,6 +20,7 @@ script = ExtResource("1_d0qnn")
 unique_name_in_owner = true
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
+tooltip_text = "Character Icon - The detected char_icon.png of this character."
 texture = ExtResource("1_ov07w")
 expand_mode = 1
 stretch_mode = 5
@@ -35,37 +38,52 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 0
+tooltip_text = "This character has been detected to Disconnect. This icon will disappear if another client reappears to take over this character."
 texture = ExtResource("3_s7833")
 expand_mode = 1
 
 [node name="ClientID" type="Label" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Client ID"
+tooltip_text = "Client ID - The most recent number the client playing this character goes by."
+mouse_filter = 0
 text = "[?]"
 
 [node name="Names" type="OptionButton" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Recognized Names"
+tooltip_text = "Names Dropdown - Recognized Names this character goes by."
 text_overrun_behavior = 1
 
 [node name="Visibility" type="TextureButton" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Visibility - Show or hide character on the map."
 toggle_mode = true
-texture_normal = ExtResource("2_ix08b")
-texture_pressed = ExtResource("3_swi4v")
+button_pressed = true
+texture_normal = ExtResource("3_swi4v")
+texture_pressed = ExtResource("2_ix08b")
 stretch_mode = 3
 
 [node name="Namelock" type="TextureButton" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Name Lock - Prevent automatic changes of the selected name"
 toggle_mode = true
 texture_normal = ExtResource("6_w7es8")
 texture_pressed = ExtResource("7_eqgw6")
 stretch_mode = 3
 
+[node name="Focus" type="TextureButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Focus Mode - When enabled, only show characters in the area this character is located in. Multiple characters can be focused on."
+toggle_mode = true
+texture_normal = ExtResource("8_k7n5l")
+texture_pressed = ExtResource("9_k2lum")
+stretch_mode = 3
+
 [connection signal="item_selected" from="Names" to="." method="_on_names_item_selected"]
 [connection signal="toggled" from="Visibility" to="." method="_on_visibility_toggled"]
+[connection signal="toggled" from="Focus" to="." method="_on_focus_toggled"]

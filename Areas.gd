@@ -51,19 +51,39 @@ func movement(chara, live, toID, to = null, fromID = null, from = null):
 		if from != null and self.get_node(fromID).get_node("%Name").text != from:
 			self.get_node(fromID).get_node("%Name").text = from
 	if live:
+		if not chara.is_visible:
+			return
+		var old_loc = chara.currentLocationID
+		var visible_areas = Globals.get_visible_areas()
 		if chara.mapChar != null:
-			var tracer = tracer_scene.instantiate()
-			tracer.modulate = chara.color
-			self.get_parent().add_child(tracer)
-			tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
+			if not visible_areas.is_empty() and old_loc in visible_areas or toID in visible_areas:
+				chara.mapChar.visible = true
+				var update = [old_loc, toID]
+				await get_tree().process_frame
+				#Globals.update_visible_characters(visible_areas + update)
+			var tracer = null
+			if chara.mapChar.visible:
+				#if chara.mapChar.current_tracer:
+					#chara.mapChar.current_tracer.queue_free()
+				tracer = tracer_scene.instantiate()
+				tracer.self_modulate = chara.color
+				tracer.self_modulate.a = 0.5
+				self.get_parent().add_child(tracer)
+				chara.mapChar.current_tracer = tracer
+				tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
 			chara.mapChar.reparent(self.get_node(toID).get_node("%CharacterContainer"))
 			chara.currentLocationID = toID
-			await get_tree().process_frame
-			tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
-			tracer.start()
+			if chara.mapChar.visible and tracer:
+				await get_tree().process_frame
+				tracer.do_add_point(chara.mapChar.global_position + chara.mapChar.size / 2)
+				var tracer_char: TextureRect = chara.mapChar.texture_rect.duplicate()
+				tracer_char.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				tracer.start(tracer_char)
+				tracer.finished.connect(tracer.queue_free)
+				chara.mapChar.fade(0.0, 1.0, 0.0, 0.2)
+			Globals.update_visible_characters(Globals.get_visible_areas())
 		else:
 			place_character(chara, chara.get_node("Icon").texture, chara.color, toID, to)
-
 
 func _on_map_view_camera_zoom_change(value):
 	zoomValue = value
