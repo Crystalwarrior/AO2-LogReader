@@ -228,11 +228,14 @@ func parse_line(line):
 	if italics:
 		parsed_view.pop()
 
-	if !is_ooc or line.contains("moves from") or line.contains("Attempting to kick"):
+	var is_movement: bool = line.contains(" moves from ")
+	var kick_message: String = "Attempting to kick "
+	var is_kick: bool = line.contains(kick_message)
+	if !is_ooc or is_movement or is_kick:
 		var aoid = null
 		var nameArray
-		if speaker == hostname and line.contains("moves from"):
-			aoid = line.split("]")[0].split("[")[1]
+		if speaker == hostname and is_movement:
+			aoid = message.get_slice("]", 0).substr(1)
 			nameArray = [line.split("]")[1].lstrip(" ").split("moves from")[0].strip_edges()]
 		else:
 			nameArray = _clean_name(speaker)
@@ -259,25 +262,38 @@ func parse_line(line):
 				currentCharacter.add_name(currentName)
 				if charfolder != "" and !currentCharacter.names.has(charfolder):
 					currentCharacter.add_name(charfolder)
-		if speaker == hostname and line.contains("Attempting to kick"):
-			aoid = message.split("[")[1].split("]")[0]
+
+		if speaker == hostname and is_kick:
+			aoid = message.right(-kick_message.length()).get_slice("]", 0).substr(1)
 			nameArray = [message.split("]")[1].split("from")[0].strip_edges()]
 			currentCharacter = _find_character(nameArray, aoid)
 			if currentCharacter:
 				for currentName in nameArray:
 					currentCharacter.add_name(currentName)
-				var fromID = message.split("[")[2].split("]")[0]
-				var from = message.split("]")[2].split("to")[0].strip_edges()
-				var toID = message.split("[")[3].split("]")[0]
-				var to = message.split("]")[3].split(".")[0].strip_edges()
+				var from_part = message.get_slice(" from ", 1).get_slice(" to [", 0)
+				var fromID = from_part.get_slice("] ", 0).substr(1)
+				# The 3 additional characters we're removing are [, ] and whitespace.
+				var from = from_part.substr(fromID.length() + 3)
+
+				var to_part = message.get_slice(" from ", 1).get_slice(" to [", 1)
+				var toID = to_part.get_slice("] ", 0)
+				# The 2 additional characters we're removing are ] and whitespace.
+				# Plus we remove the . at the end.
+				var to = to_part.substr(toID.length() + 2).left(-1)
 				var live = timeline.value == timeline.max_value
 				areas.movement(currentCharacter, live, toID, to, fromID, from)
 
-		if speaker == hostname and line.find("moves from") != -1:
-			var from = line.split("] ")[2].split(" to")[0]
-			var fromID = line.split("] ")[1].split("[")[1]
-			var to = line.split("] ")[3].rsplit(".")[0]
-			var toID = line.split("] ")[2].split("[")[1]
+		if speaker == hostname and is_movement:
+			var from_part = message.get_slice(" moves from ", 1).get_slice(" to [", 0)
+			var fromID = from_part.get_slice("] ", 0).substr(1)
+			# The 3 additional characters we're removing are [, ] and whitespace.
+			var from = from_part.substr(fromID.length() + 3)
+			
+			var to_part = message.get_slice(" moves from ", 1).get_slice(" to [", 1)
+			var toID = to_part.get_slice("] ", 0)
+			# The 2 additional characters we're removing are ] and whitespace.
+			# Plus we remove the . at the end.
+			var to = to_part.substr(toID.length() + 2).left(-1)
 			if startTime == null:
 				startTime = time
 			if time > endTime:
